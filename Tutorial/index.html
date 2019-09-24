@@ -1,11 +1,136 @@
 <html>
 <head>
-	<title>Ensemble Sample Game Tutorial: Part 1</title>
+	<title>Ensemble Sample Game Tutorial: Part 2</title>
 	<script src="ensemble.js"></script>
+	
+	<style>
+	body {
+		background-color: black;
+		color: white;
+	}
+		
+	.field {
+		position: relative;
+		overflow: hidden;
+		width: 530px;
+		height: 30px;
+		border: 3px solid #FFF;
+	}
+		
+	.character {
+		position: absolute;
+		background-color: black;
+		width: 30px;
+		height: 20px;
+		padding-top: 10px;
+		text-align: center;
+		color: #fff;
+		font-size: 10px;
+		white-space: nowrap;
+	}	
+		
+	#titleDiv {
+		float : left;
+	}
+
+	#statusDiv {
+		margin-left : 75px;
+		clear : both;
+	}
+
+	#actionList_hero_rival {
+		visibility : hidden;
+	}
+	</style>
+	
+	<script type="text/javascript">
+var stateInformation = {
+	"loveToHeroCloseness" : "NA",
+	"loveToHeroAttraction" : "NA",
+	"heroToLoveCloseness" : "NA",
+	"heroToLoveAttraction" : "NA",
+	"loveToRivalCloseness" : "NA",
+	"loveToRivalAttraction" :"NA",
+	"heroStrength" : "NA",
+	"heroIntelligence" : "NA"
+};
+
+var gameVariables = {
+	"gameOver" : false,
+	"endingText" : "NA",
+	"turnNumber" : 0,
+	"numIntents" : 2,
+	"numActionsPerIntent" : 5
+};
+
+var move = function() {
+	var elem = document.getElementById("hero");
+	var left = 0;
+
+	function frame() {
+		left++; // update parameters
+		elem.style.left = left + 'px';
+		if (left == 100) {
+			clearInterval(id);
+		}
+	}
+
+	var id = setInterval(frame, 10); // draw every 10ms
+};
+	</script>
 </head>
 <body>
-	<script type="text/javascript">
+	<div id="titleDiv">
+		<h1>Lovers and Rivals!</h1>
+	</div>
+	<div id="statusDiv">
+		<h3 id="statusMessage">Click Buttons to win the heart of your love!</h3>
+	</div>
 
+	<div class = "field" onclick="move()">
+		<div class = "character" id="hero">
+			\O/
+		</div>
+		<div class = "character" id="love">
+			0\
+		</div>
+		<div class = "character" id="rival">
+			@.o
+		</div>
+	</div>
+
+	<div id="actionArea">
+		<h1> What to do on turn <span id="turnNumberPlace">0</span>:</h1>
+		Towards Love:
+		<div id="actionList_hero_love"> </div>
+		Towards Yourself:
+		<div id="actionList_hero_hero"></div>
+		<!--Towards Rival:-->
+		<div id="actionList_hero_rival"></div>
+	</div>
+
+	<div id="stateArea">
+		<h1>Social State</h1>
+		<div id="closenessStateDisplay">
+			<h2>Closeness</h2>
+			<div id="closenessHeroToLover">Hero to Lover: <span id="closenessHeroToLoverNumber">NA</span></div>
+			<div id="closenessLoverToHero">Lover to Hero: <span id="closenessLoverToHeroNumber">NA</span></div>
+			<div id="closenessLoverToHero">Lover to Rival: <span id="closenessLoverToRivalNumber">NA</span></div>
+		</div>
+		<div id="attractionStateDisplay">
+			<h2>Attraction</h2>
+			<div id="attractionHeroToLover">Hero to Lover: <span id="attractionHeroToLoverNumber">NA</span></div>
+			<div id="attractionLoverToHero">Lover to Hero: <span id="attractionLoverToHeroNumber">NA</span></div>
+			<div id="attractionLoverToRival">Lover to Rival: <span id="attractionLoverToRivalNumber">NA</span></div>
+		</div>
+		<div id="Hero Attributes">
+			<h2>Hero Attributes</h2>
+			<div id="heroStrength">Strength: <span id="heroStrengthNumber">NA</span></div>
+			<div id="heroIntelligence">Intelligence: <span id="heroIntelligenceNumber">NA</span></div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
 		document.addEventListener('ensembleLoaded', function (e) {
 			//Init ensemble
 			var loadResult = ensemble.init();
