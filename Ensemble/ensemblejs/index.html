@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<!-- Project Ensemble Main Page -->
+
+<html>
+<head>
+
+	<title>Ensemble</title>
+
+    <style type="text/css" media="screen">
+      .codeBox {
+        padding: 7px;
+        overflow:scroll;
+        background-color: #eee;
+        font-weight:normal;
+      }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+
+      _LOGS = [];	// global space to hold log messages.
+
+      // holds log categories. Can be pre-populated by adding values to the array here. NOTE: should be an array of tuples, with category name string and boolean "startsSelected"
+      _LOGTYPES = [
+        ["turns", true], ["rules", true], ["trigger", true]
+      ];
+
+      _bridge = 0;
+
+      window.setTimeout(function() {
+        var chromeClientCLI = window.chromeClientCLI;
+        var errorBox = window.errorBox;
+        var chromeErrorFooter = window.chromeErrorFooter;
+        var chromeInstructions = window.chromeInstructions;
+        var isChrome = !!window.chrome;
+        chromeClientCLI.innerText =
+          'open -a "Google Chrome" --new \\\n' +
+          '   ' + window.location.href + ' \\\n' +
+          '   --args --allow-file-access-from-files --user-data-dir=/tmp';
+
+        errorBox.innerText =
+          isChrome ? 'If you can\'t load these files, it might be because of browser permissions that restrict accessing files on the local system. Try running in Firefox, or start a localhost server to run in Chrome. To do this:' :
+          'Errors loading page: Check the console.';
+        chromeErrorFooter.innerText =
+          isChrome ? 'If page still does not load, check console.' : '';
+
+        if (!isChrome) {
+          chromeInstructions.innerText = "";
+        }
+      }, 0);
+
+    </script>
+
+</head>
+<body>
+
+	<!-- Most of the DOM will be created by React. -->
+
+	<div id="reactBody">
+
+
+
+
+
+		<!-- Instructions in case browser can't display. -->
+		<h1>Ensemble &mdash; Project Root</h1>
+
+    <p><a href="tests.html">Ensemble Unit Tests</a><br><br><a href="ensembletool/ensembleconsole.html">Local Ensemble Console (test mode)</a></p>
+
+	    <div id="container">
+	      <p>
+	        <h4 id="errorBox" style="color: #733"></h4>
+	        <ol id="chromeInstructions">
+	          <li>
+	            Open this page on a Mac via the terminal command:
+	            <pre id="chromeClientCLI" class="codeBox">
+	          </li>
+	          <h4><i>OR</i></h4>
+	          <li>
+	            Serve this page from a web server
+	            <pre id="chromeServerCLI" class="codeBox">
+	cd /Path/To/This/File
+	python -m SimpleHTTPServer
+	open -a "Google Chrome"  <a href="http://localhost:8000/">http://localhost:8000/</a>.  </pre>
+	          </li>
+	        </ol>
+	        <h4 id="chromeErrorFooter" style="color: #733"></h4>
+	      </p>
+	    </div>
+		<!-- End instructions -->
+
+
+
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ensemble Tool</title>
+	<script src="../jslib/require.js" data-main="ensembleconsole.js"></script>
+	<link rel="stylesheet" href="../css/jquery-ui.structure.min.css">
+	<link rel="stylesheet" href="../css/jquery-ui.theme.min.css">
+	<link rel="stylesheet" href="ensembleconsole.css">
+
+</head>
+<body>
+
+
+<!-- 
+Console to set and change state.
+References: volition rules, trigger rules, social types, console commands.
+socialRecord History viewer
+
+ -->
+
+
+<h1>Ensemble Tool</h1>
+
+<div id="tabs">
+  <ul>
+    <li id="tabLiConsole"><a href="#tabsConsole">Console</a></li>
+    <li id="tabLiSFDB"><a href="#tabsSfdb">Social Record Viewer</a></li>
+    <li id="tabLiRulesViewer"><a href="#tabsRules">Rules Viewer</a></li>
+    <li id="tabLiRulesEditor"><a href="#tabsEditor">Rules Editor</a></li>
+    <!-- <li id="tabLiActionEditor"><a href="#tabsActionEditor">Action Editor</a></li> -->
+  </ul>
+  <div id="tabsConsole">
+  	<div id="consoleResults">
+  		<p id="consoleTips">Commands: <span title="" id="cmdSet">set</span> &bull; 
+	  		<span title="" id="cmdUnset">unset</span> &bull; 
+	  		<span title="" id="cmdVolitions">volitions</span> &bull; 
+	  		<span title="" id="cmdNext">next</span> &bull; 
+	  		<span title="" id="cmdShow">show</span> &bull; 
+	  		<span title="" id="cmdActions">actions</span> &bull; 
+			<span title="" id="cmdDoAction">doAction</span> 
+  		</p>
+
+  		<!-- <p><i>Type commands to change the ensemble state here.</i></p> -->
+  		<p>&nbsp;</p>
+  	</div>
+    <div id="consolePrompt">
+    	<span id="consoleLabel"><b>Command:</b></span> <input type="text" id="command" size="50" />
+    </div>
+    <div id="spacer">&nbsp;<br>&nbsp;<br>&nbsp;<br></div>
+  </div>
+  <div id="tabsSfdb">
+    <p><b>Social Record History</b></p>
+    <div id="timestepDiv">
+	    <p id="labelTimestep">Timestep</p>
+   		<p id="timestep"></p>
+   		<button id="timeStepBack">&lt;</button>
+   		<button id="timeStepForward">&gt;</button><br>
+   		<p id="sfdbhistorykey">Green indicates new value this timestep.</p>
+   		<button id="resetSFDBHistory">Clear History</button>
+   	</div>
+    <div id="sfdbtable"></div>
+
+  </div>
+  <div id="tabsRules">
+  	<div id="rulesTabs">
+  		<div id="ruleFilter">
+  			Filter Rules: <input id="inputRuleFilter"/>
+  			<p style="display:none;" id="filterWarning"><i>Showing only rules that match "<span id="filterWord"></span>"</i></p>
+  		</div>
+  		<ul>
+  			<li><a href="#tabstrigger">Trigger</a></li>
+  			<li><a href="#tabsvolition">Volition</a></li>
+  		</ul>
+  		<div id="tabstrigger">
+  			<p><b>Trigger Rules</b></p>
+  			<div id="triggerRulesArea"></div>
+  		</div>
+  		<div id="tabsvolition">
+  			<p><b>Volition Rules</b></p>
+  			<div id="volitionRulesArea"></div>
+  		</div>
+  		<div id="newRule">
+  			<button id="newRuleButton">New Trigger Rule</button>
+  		</div>
+  	</div>
+  </div>
+  <div id="tabsEditor">
+  	<p><i>No Rule Loaded.</i></p>
+  </div>
+  <!-- The following comment is Ben's experimentation with adding an action editor tab. -->
+  <!--
+   <div id="tabsActionEditor">
+    <div id="actionEditorLeftHandSideDiv">
+      <div id="listOfActionsDiv">
+      
+      </div>
+    </div>
+    <div id="tabsActionAuthoringArea">
+      <button id="authoringAreaButton">I'm authoring! </button>
+      'm authoring! 'm authoring! 'm authoring! 'm authoring! 'm authoring! 'm authoring!'m authoring!'m authoring!'m authoring!'m authoring!'m authoring!
+      'm authoring!'m authoring!'m authoring!'m authoring!
+      'm authoring!'m authoring!'m authoring!'m authoring!'m authoring!
+
+      'm authoring!'m authoring!'m authoring!
+
+      'm authoring!'m authoring!'m authoring!'m authoring!'m authoring!
+
+      'm authoring!'m authoring!'m authoring!'m authoring!'m authoring!'m authoring!
+      'm authoring!
+
+      <BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+
+      'm authoring!'m authoring!'m authoring!'m authoring!
+      'm authoring!'m authoring!
+
+      'm authoring!'m authoring!'m authoring!
+
+      'm authoring!'m authoring!'m authoring!
+
+      <BR><BR><BR>
+      'm authoring!'m authoring!'m authoring!
+    </div> -->
+    <!--button id="intentAreaButton"> Click me I'm gonna be a type or something! </button-->
+  </div>
+
+</div>
+
+<div id="projectControls">
+  <button id="newSchema">New Schema</button>  
+  <button id="loadSchema">Load Schema</button>
+</div>
+
+
+<div id="reference">
+
+	<p id="referenceLabel">Active Schema</p>
+	<input style="display:none;" id="fileDialog" type="file" nwdirectory />
+	<div id="infoOnSocialTypes"></div>
+
+</div>
+
+<div id="actions">
+	<p id="referenceLabel">Actions</p>
+	<div id="actionList"></div>
+</div>
+
+<div id="characters">
+	<p id="referenceLabel">Characters</p>
+	<div id="characterList"></div>
+</div>
+
+
+
+<div id="msgBlock">
+</div>
+
+<div id="bindTest">
+</div>
+
+<div id="dialogBox" style="display:none;"></div>
+
+<div id="schemaEditForm">
+  <div>
+    <label for="editorCategoryName" title="A human-readable name for this schema category.">Category Name</label> 
+    <input id="editorCategoryName" type="text" value=""/>
+    <div id="editorMsg">Changes saved.</div>
+  </div>
+  <div>
+    <label for="editorDirection" title="Whether this category's types are about a single person (undirected), one person's attitude towards another (directed), or a mutual social state between two people (reciprocal).">Direction</label> 
+    <input type="radio" id="dirUn" name="edDirectionType" value="undirected">Undirected 
+    <input type="radio" id="dirDir" name="edDirectionType" value="directed">Directed 
+    <input type="radio" id="dirRecip" name="edDirectionType" value="reciprocal">Reciprocal
+  </div>
+  <div>
+    <label for="editorIsBoolean" title="Whether this category's types are simple on/off flags (true or not), or represented with a numeric strength.">Data Type</label> 
+    <input type="radio" id="isBooleanT" name="isBoolean" value="true">True/False 
+    <input type="radio" id="isBooleanF" name="isBoolean" value="false">Numeric
+  </div>
+  <div>
+    <label for="editorDefaultValue" class="edSubtype" title="Defines the value that Ensemble should assume if there are no social records that relate to a type in this category.">Default</label> 
+    <span id="edDefBoolean">
+      <input type="radio" id="defaultValT" name="defaultValue" value="true">True 
+      <input type="radio" id="defaultValF" name="defaultValue" value="false">False
+    </span>
+    <input id="editorDefaultValue" type="text" value=""/>
+  </div>
+  <div id="schemaEdMinMax">
+    <label for="editorMin" class="edSubtype" title="The minimum and maximum possible numeric values this category's types should have.">Min/Max</label> 
+    <input id="editorMin" type="text" value=""/> / 
+    <input id="editorMax" type="text" value=""/>
+  </div>
+  <div>
+    <label for="editorShowDuration" title="Whether or not this category's types should revert back to the default value after the given number of turns, or remain at the new value until changed again.">Duration?</label> 
+    <input id="editorShowDuration" type="checkbox"/> 
+    <span id="editorDurationNumArea"><input id="editorDuration" type="text" value=""/></span>
+  </div>
+  <div>
+    <label for="editorActionable" title="Whether or not characters can form volitions (desires) to take actions directly changing types in this category. If actionable, you'll need to write actions to support all types in this category becoming true (or rising) and becoming false (or dropping). If not actionable, this category's types can appear in rule preconditions and effects, but characters may not directly reason about taking action to change them.">Actionable?</label> 
+    <input id="editorActionable" type="checkbox"/>
+  </div>
+  <div id="edTypesDiv">
+    <label title="The specific social types matching this category's description. Each type shares the template defined by this category, but is otherwise a distinct type of social record. For example, a category like 'Ability Scores' might have types of 'Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', and 'Charisma'.">Types</label>
+    <div id="edTypesGroup">
+      <span id="schemaEdNormTypes"></span>
+      <span id="schemaEdNewType" class="schemaEdType">NEW</span>       
+    </div>
+  </div>
+  <div id="edExamples">
+    <label>Statistics</label>
+    <span id="edExHeader">These schema entries involve this category:</span>
+    <ul id="ruleExamples">
+      <li id="triggerExample"><span class="edSampleMatch">People aren't interesting in dating people who have been mean to them in the past</span> and <span class="edOthers" title=""><span class="edHowMany">17 other</span> <span class="edMatchType">trigger</span> rules</li>
+      <li id="volitionExample"><span class="edHowMany">4</span> <span class="edMatchType">volition</span> rules</li>
+      <li id="socialRecordsExample"><span class="edHowMany">9</span> <span class="edMatchType">social records</span> referncing a member of this category</li>
+      <li id="actionsExample"><span class="edHowMany">??</span> <span class="edMatchType">actions</span> referncing a member of this category</li>
+  </div>
+</div>
+
+</body>
+</html>
