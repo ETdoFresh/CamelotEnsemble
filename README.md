@@ -10,6 +10,6 @@ http://cs.uky.edu/~sgware/projects/camelot/v0-3/index.html
 http://www.ben-samuel.com/projects/the-ensemble-engine/
 
 ## Usage
-```run.cmd```
+### ```run.cmd```
 This is a windows script that will download portable NodeJS and Camelot if they haven't been downloaded already. 
 Then it runs the simulation using ./CamelotEnsemble/app.js
