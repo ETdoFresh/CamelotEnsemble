@@ -1,12 +1,20 @@
 'use strict';
 
-console.log('CreatePlace(BobsHouse, Coottage)');
-console.log('CreateCharacter(Bob, M, 25)');
-console.log('CreateClothing(Bob, Peasant)');
-console.log('SetPosition(Bob, BobsHouse.Door)');
+const readline = require('readline');
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
+console.log('start CreatePlace(BobsHouse, Cottage)');
+console.log('start CreateCharacter(Bob, M, 25)');
+console.log('start ChangeClothing(Bob, Peasant)');
+console.log('start SetPosition(Bob, BobsHouse.Door)');
 console.log('start Game');
 
-console.log('Press any key to exit');
-process.stdin.setRawMode(true);
-process.stdin.resume();
-process.stdin.on('data', process.exit.bind(process, 0));
+rl.on('line', (input) => {
+    if (input == 'input Selected Start') {
+        console.log('start SetCameraFocus(Bob)');
+        console.log('start EnableInput()');
+    }
+    else if (input == 'exit') {
+        process.exit();
+    }
+});
