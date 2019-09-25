@@ -1,7 +1,8 @@
 {
-  "name": "CamelotEnsemble",
+  "name": "camelot-ensemble",
   "version": "0.0.0",
   "description": "CamelotEnsemble",
+  "main": "app.js",
   "author": {
     "name": ""
   }
