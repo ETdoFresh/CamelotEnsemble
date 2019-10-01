@@ -986,67 +986,67 @@ exports.init = function () {
 };
 
 exports.ensembleInterface = {
-    init: init,
-    loadSocialStructure: loadSocialStructure,
-    getSocialStructure: getSocialStructure,
-    getSchema: getSchema,
-    loadBlueprint: loadBlueprint,
-    getCategoryDescriptors: getCategoryDescriptors,
-    getCategoryFromType: getCategoryFromType,
-    isValidTypeForCategory: isValidTypeForCategory,
-    updateCategory: updateCategory,
-    addCharacters: addCharacters,
-    getCharacters: getCharacters,
-    getCharactersWithMetadata: getCharactersWithMetadata,
-    getCharData: getCharData,
-    getCharName: getCharName,
+    init: exports.init,
+    loadSocialStructure: exports.loadSocialStructure,
+    getSocialStructure: exports.getSocialStructure,
+    getSchema: exports.getSchema,
+    loadBlueprint: exports.loadBlueprint,
+    getCategoryDescriptors: exports.getCategoryDescriptors,
+    getCategoryFromType: exports.getCategoryFromType,
+    isValidTypeForCategory: exports.isValidTypeForCategory,
+    updateCategory: exports.updateCategory,
+    addCharacters: exports.addCharacters,
+    getCharacters: exports.getCharacters,
+    getCharactersWithMetadata: exports.getCharactersWithMetadata,
+    getCharData: exports.getCharData,
+    getCharName: exports.getCharName,
 
-    loadBaseBlueprints: loadBaseBlueprints,
-    loadFile: loadFile,
+    loadBaseBlueprints: exports.loadBaseBlueprints,
+    loadFile: exports.loadFile,
 
-    calculateVolition: ruleLibrary.calculateVolition,
-    runTriggerRules: ruleLibrary.runTriggerRules,
-    ruleToEnglish: ruleLibrary.ruleToEnglish,
-    predicateToEnglish: ruleLibrary.predicateToEnglish,
+    //calculateVolition: exports.ruleLibrary.calculateVolition,
+    //runTriggerRules: exports.ruleLibrary.runTriggerRules,
+    //ruleToEnglish: exports.ruleLibrary.ruleToEnglish,
+    //predicateToEnglish: exports.ruleLibrary.predicateToEnglish,
 
-    dumpSocialRecord: socialRecord.dumpSocialRecord,
-    dumpActionLibrary: actionLibrary.dumpActions,
-    set: socialRecord.set,
-    get: getSocialRecord,
-    getValue: getValue,
-    setPredicates: setPredicates,
-    setCharacterOffstage: setCharacterOffstage,
-    getIsCharacterOffstage: getIsCharacterOffstage,
-    setCharacterOnstage: setCharacterOnstage,
-    getIsCharacterOnstage: getIsCharacterOnstage,
-    setCharacterEliminated: setCharacterEliminated,
-    getIsCharacterEliminated: getIsCharacterEliminated,
-    setupNextTimeStep: socialRecord.setupNextTimeStep,
-    getRegisteredDirection: socialRecord.getRegisteredDirection,
-    getAction: actionLibrary.getAction,
-    getActions: actionLibrary.getActions,
-    getAllActions: actionLibrary.getAllActions,
-    addActions: actionLibrary.parseActions,
-    addHistory: socialRecord.addHistory,
-    clearHistory: socialRecord.clearHistory,
-    getSocialRecordCopyAtTimestep: socialRecord.getSocialRecordCopyAtTimestep,
-    getSocialRecordCopy: socialRecord.getSocialRecordCopy,
-    getCurrentTimeStep: socialRecord.getCurrentTimeStep,
+    //dumpSocialRecord: exports.socialRecord.dumpSocialRecord,
+    //dumpActionLibrary: exports.actionLibrary.dumpActions,
+    //set: exports.socialRecord.set,
+    get: exports.getSocialRecord,
+    getValue: exports.getValue,
+    setPredicates: exports.setPredicates,
+    setCharacterOffstage: exports.setCharacterOffstage,
+    getIsCharacterOffstage: exports.getIsCharacterOffstage,
+    setCharacterOnstage: exports.setCharacterOnstage,
+    getIsCharacterOnstage: exports.getIsCharacterOnstage,
+    setCharacterEliminated: exports.setCharacterEliminated,
+    getIsCharacterEliminated: exports.getIsCharacterEliminated,
+    //setupNextTimeStep: exports.socialRecord.setupNextTimeStep,
+    //getRegisteredDirection: exports.socialRecord.getRegisteredDirection,
+    //getAction: exports.actionLibrary.getAction,
+    //getActions: exports.actionLibrary.getActions,
+    //getAllActions: exports.actionLibrary.getAllActions,
+    //addActions: exports.actionLibrary.parseActions,
+    //addHistory: exports.socialRecord.addHistory,
+    //clearHistory: exports.socialRecord.clearHistory,
+    //getSocialRecordCopyAtTimestep: exports.socialRecord.getSocialRecordCopyAtTimestep,
+    //getSocialRecordCopy: exports.socialRecord.getSocialRecordCopy,
+    //getCurrentTimeStep: exports.socialRecord.getCurrentTimeStep,
 
-    addRules: addRules,
-    getRules: getRules,
-    filterRules: filterRules,
-    filterActions: filterActions,
-    setRuleById: setRuleById,
-    getRuleById: ruleLibrary.getRuleById,
-    deleteRuleById: ruleLibrary.deleteRuleById,
+    addRules: exports.addRules,
+    getRules: exports.getRules,
+    filterRules: exports.filterRules,
+    filterActions: exports.filterActions,
+    setRuleById: exports.setRuleById,
+    //getRuleById: exports.ruleLibrary.getRuleById,
+    //deleteRuleById: exports.ruleLibrary.deleteRuleById,
 
-    setActionById: actionLibrary.setActionById,
-    doAction: doAction,
-    setSocialRecordById: socialRecord.setById,
+    //setActionById: exports.actionLibrary.setActionById,
+    doAction: exports.doAction,
+    //setSocialRecordById: exports.socialRecord.setById,
 
 
-    reset: reset
+    reset: exports.reset
 
 
 
@@ -1067,9 +1067,9 @@ exports.ensembleInterface = {
 //addVolitionRules		: addVolitionRules,
 
 // Export interface to a global variable, "ensemble".
-ensemble = ensembleInterface;
-var event = document.createEvent('Event');
-event.initEvent('ensembleLoaded', true, true);
-document.dispatchEvent(event);
+//ensemble = ensembleInterface;
+//var event = document.createEvent('Event');
+//event.initEvent('ensembleLoaded', true, true);
+//document.dispatchEvent(event);
 
-return ensembleInterface;
+//return ensembleInterface;
