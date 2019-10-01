@@ -4,17 +4,19 @@
 * @private
 */
 
-exports.socialRecord = [];
-exports.currentTimeStep = -1; //initialize to -1 (assumes we start at time 0 when playings)
-exports.defaultValues = {};
-exports.maxValues = {};
-exports.minValues = {};
-exports.directions = {};
-exports.isBooleans = {};
-exports.clonePolicies = {};
-exports.durations = {};
-exports.offstageCharacters = []; // Characters that aren't in the current level (think Prom Week)
-exports.eliminatedCharacters = []; // Characters that are never coming back and have had references to/from removed (think Dayton)
+const util = require('../../jslib/util');
+
+/*--*/ var socialRecord = [];
+/*--*/ var currentTimeStep = -1; //initialize to -1 (assumes we start at time 0 when playings)
+/*--*/ var defaultValues = {};
+/*--*/ var maxValues = {};
+/*--*/ var minValues = {};
+/*--*/ var directions = {};
+/*--*/ var isBooleans = {};
+/*--*/ var clonePolicies = {};
+/*--*/ var durations = {};
+/*--*/ var offstageCharacters = []; // Characters that aren't in the current level (think Prom Week)
+/*--*/ var eliminatedCharacters = []; // Characters that are never coming back and have had references to/from removed (think Dayton)
 
 /**
  * @method getLength
@@ -23,7 +25,7 @@ exports.eliminatedCharacters = []; // Characters that are never coming back and 
  * @private
  * @return {[int]} [length of the socialRecord object]
  */
-exports.getLength = function () {
+/*--*/ var getLength = function () {
     return socialRecord.length;
 };
 
@@ -34,7 +36,7 @@ exports.getLength = function () {
  * @return {[int]}          [the length of the array that resides at socialRecord[timestep]]
  * @private
  */
-exports.getLengthAtTimeStep = function (timestep) {
+/*--*/ var getLengthAtTimeStep = function (timestep) {
     if (timestep < 0) {
         console.log("ERROR in getLengthAtTimeStep -- tried to get the length of a negative timestep");
     }
@@ -51,7 +53,7 @@ exports.getLengthAtTimeStep = function (timestep) {
  * @example console.log("The currentTimestep is : " , ensemble.getCurrentTimestep());
  * @return {Int} the currentTimeStep stored in the socialRecord
  */
-exports.getCurrentTimeStep = function () {
+/*--*/ var getCurrentTimeStep = function () {
     return currentTimeStep;
 };
 
@@ -62,7 +64,7 @@ exports.getCurrentTimeStep = function () {
  @example ensemble.dumpSocialRecord();
  * @memberOf ensemble
  */
-exports.dumpSocialRecord = function () {
+/*--*/ var dumpSocialRecord = function () {
     console.log("socialRecord:", socialRecord);
 };
 
@@ -80,7 +82,7 @@ exports.dumpSocialRecord = function () {
  *
  * 
  */
-exports.getSocialRecordCopyAtTimestep = function (timeStep) {
+/*--*/ var getSocialRecordCopyAtTimestep = function (timeStep) {
     if (timeStep === undefined) {
         timeStep = currentTimeStep;
     }
@@ -91,38 +93,38 @@ exports.getSocialRecordCopyAtTimestep = function (timeStep) {
     return slice;
 }
 
-exports.getSocialRecordCopy = function () {
+/*--*/ var getSocialRecordCopy = function () {
     return util.clone(socialRecord);
 }
 
-exports.registerMaxValue = function (predicate) {
+/*--*/ var registerMaxValue = function (predicate) {
     maxValues[predicate.category] = predicate.maxValue !== undefined ? predicate.maxValue : 100;
 };
 
-exports.getRegisteredMaxValue = function (predicate) {
+/*--*/ var getRegisteredMaxValue = function (predicate) {
     if (predicate === undefined || predicate.category === undefined) {
         console.log("Error: this predicate had no category.", predicate);
     }
     return maxValues[predicate.category];
 };
 
-exports.registerMinValue = function (predicate) {
+/*--*/ var registerMinValue = function (predicate) {
     minValues[predicate.category] = predicate.minValue !== undefined ? predicate.minValue : 0;
 };
 
-exports.getRegisteredMinValue = function (predicate) {
+/*--*/ var getRegisteredMinValue = function (predicate) {
     return minValues[predicate.category];
 };
 
-exports.registerDuration = function (predicate) {
+/*--*/ var registerDuration = function (predicate) {
     durations[predicate.category] = predicate.duration;
 };
 
-exports.getRegisteredDuration = function (predicate) {
+/*--*/ var getRegisteredDuration = function (predicate) {
     return durations[predicate.category];
 };
 
-exports.registerDirection = function (predicate) {
+/*--*/ var registerDirection = function (predicate) {
     directions[predicate.category] = predicate.directionType;
 };
 
@@ -136,23 +138,23 @@ exports.registerDirection = function (predicate) {
  * @return {String} Returns a success message upon initialization.
  *
  */
-exports.getRegisteredDirection = function (predicate) {
+/*--*/ var getRegisteredDirection = function (predicate) {
     return directions[predicate.category];
 };
 
-exports.registerDefaultValue = function (predicate) {
+/*--*/ var registerDefaultValue = function (predicate) {
     defaultValues[predicate.category] = predicate.defaultValue;
 };
 
-exports.getRegisteredDefaultValue = function (predicate) {
+/*--*/ var getRegisteredDefaultValue = function (predicate) {
     return defaultValues[predicate.category];
 };
 
-exports.registerIsBoolean = function (predicate) {
+/*--*/ var registerIsBoolean = function (predicate) {
     isBooleans[predicate.category] = predicate.isBoolean;
 };
 
-exports.getRegisteredIsBoolean = function (predicate) {
+/*--*/ var getRegisteredIsBoolean = function (predicate) {
     return isBooleans[predicate.category];
 };
 
@@ -166,7 +168,7 @@ exports.getRegisteredIsBoolean = function (predicate) {
 * @example ensemble.setupNextTimeStep(); // increments the current timestep by one.
 * @param {Number} timeStep The timeStep to catch up the socialRecord to. If omitted, assumes the currentTimeStep + 1.
 */
-exports.setupNextTimeStep = function (timeStep) {
+/*--*/ var setupNextTimeStep = function (timeStep) {
     if (currentTimeStep === -1) {
         currentTimeStep += 1;
     }
@@ -234,7 +236,7 @@ exports.setupNextTimeStep = function (timeStep) {
 };
 
 // Helper function for newGet(). Checks whether two predicates have a compatible value, taking into account an optional operator and passed-in expected values.
-exports.checkValueMatch = function (socialRecordValue, searchValue, operator) {
+/*--*/ var checkValueMatch = function (socialRecordValue, searchValue, operator) {
     if (searchValue === "any") {
         return true;
     }
@@ -254,11 +256,11 @@ exports.checkValueMatch = function (socialRecordValue, searchValue, operator) {
     return true;
 }
 
-exports.matchedResults;
-exports.matchedResultsStrings;
+/*--*/ var matchedResults;
+/*--*/ var matchedResultsStrings;
 
 // Helper function for newGet(). Adds a matching predicate to the module array matchedResults, either as a new object or a reference to a point in the socialRecord, and ensuring no duplicate predicates are added.
-exports.addResult = function (predicateRef, value, addAsReference) {
+/*--*/ var addResult = function (predicateRef, value, addAsReference) {
 
     var matchResult;
 
@@ -283,7 +285,7 @@ exports.addResult = function (predicateRef, value, addAsReference) {
 }
 
 // Helper function used by socialRecord.get to see if the given predicate matches a default value.
-exports.checkForDefaultMatch = function (searchPredicate, defaultValue, searchValue, isBooleanPred) {
+/*--*/ var checkForDefaultMatch = function (searchPredicate, defaultValue, searchValue, isBooleanPred) {
     var matchesDefault;
     if (searchPredicate.value !== undefined) {
 
@@ -312,7 +314,7 @@ exports.checkForDefaultMatch = function (searchPredicate, defaultValue, searchVa
 };
 
 //ensemble.get() should be called by public, this should only be used internally.
-exports.get = function (searchPredicate, mostRecentTime, lessRecentTime, useDefaultValue, params) {
+/*--*/ var get = function (searchPredicate, mostRecentTime, lessRecentTime, useDefaultValue, params) {
 
     var searchValue = searchPredicate.value;
     var defaultValue = defaultValues[searchPredicate.category];
@@ -423,7 +425,7 @@ var history = ensemble.addHistory(rawHistory);
  * @return {object} A Parsed JSON file representing the history that was just loaded in.
  * @param  {object} content - A javascript object detailing the social history to populate the socialRecord with.
  */
-exports.addHistory = function (content) {
+/*--*/ var addHistory = function (content) {
     var history;
     try {
         if (typeof content === "string") {
@@ -465,9 +467,10 @@ exports.addHistory = function (content) {
 
 
 // Return a hash string guaranteed to be unique for each distinct predicate regardless of key order.
-exports.predicateHash = function (obj) {
+/*--*/ var predicateHash = function (obj) {
     var hash = [];
-    var sortedKeys = _.keys(obj).sort();
+    //var sortedKeys = _.keys(obj).sort();
+    var sortedKeys = Object.keys(obj).sort();
     for (var i = 0; i < sortedKeys.length; i++) {
         hash[i] = obj[sortedKeys[i]];
     };
@@ -482,7 +485,7 @@ exports.predicateHash = function (obj) {
  * @memberof socialRecord
  * @return a string representation of the current predicate represented by 'this'
  */
-exports.predicateToString = function () {
+/*--*/ var predicateToString = function () {
     var returnString = "";
     for (var key in this) {
         returnString += key + ": " + this[key] + ", ";
@@ -502,7 +505,7 @@ exports.predicateToString = function () {
  ensemble.set(predicateToSet); // will give the character Bob the trait "kind".
  * @param {Object} setPredicate - the predicate that we would like to save to the socialRecord
  */
-exports.set = function (setPredicate) {
+/*--*/ var set = function (setPredicate) {
     var pattern = {};
     pattern.category = setPredicate.category;
     pattern.type = setPredicate.type;
@@ -610,7 +613,7 @@ exports.set = function (setPredicate) {
  * @private
  * @description A means to update a social record by ID. Primarily meant to be used by the uathoring tool
  */
-exports.setById = function (id, newRecord) {
+/*--*/ var setById = function (id, newRecord) {
     if (id === undefined || id === null) {
         return false;
     }
@@ -633,7 +636,7 @@ exports.setById = function (id, newRecord) {
  * defaultValues and directions, are NOT removed, so there is no need to re-register
  * @example ensemble.clearHistory(); // all entries in the social record have now been removed, and the currentTimeStep has been reinitialized.
  */
-exports.clearHistory = function () {
+/*--*/ var clearHistory = function () {
     socialRecord = [];
     currentTimeStep = -1;
 };
@@ -645,7 +648,7 @@ exports.clearHistory = function () {
  * @method clearEverthing
  * @memberof socialRecord
  */
-exports.clearEverything = function () {
+/*--*/ var clearEverything = function () {
     socialRecord = [];
     currentTimeStep = -1;
     defaultValues = {};
@@ -668,7 +671,7 @@ exports.clearEverything = function () {
  * @param timeStep 			an integer representing the timeStep we want to see the contents of the socialRecord at. Assume current time step if undefined.
  * @return historyString 	A string representing the contents of the socialRecord at the specified point in history
  */
-exports.socialRecordHistoryToString = function (timeStep) {
+/*--*/ var socialRecordHistoryToString = function (timeStep) {
     if (timeStep === undefined) {
         timeStep = currentTimeStep;
     }
@@ -692,7 +695,7 @@ exports.socialRecordHistoryToString = function (timeStep) {
 
 };
 
-exports.socialRecordFullHistoryToString = function () {
+/*--*/ var socialRecordFullHistoryToString = function () {
     var returnString = "";
     for (var i = 0; i < socialRecord.length; i += 1) {
         returnString += socialRecordHistoryToString(i);
@@ -701,7 +704,7 @@ exports.socialRecordFullHistoryToString = function () {
 };
 
 //setter for if a character is offstage.
-exports.putCharacterOffstage = function (characterName) {
+/*--*/ var putCharacterOffstage = function (characterName) {
     //TODO: Validate that 'characterName' is a valid character in this system!
     if (offstageCharacters.indexOf(characterName) === -1) {
         //Awesome, let's add them to offstage!
@@ -714,7 +717,7 @@ exports.putCharacterOffstage = function (characterName) {
 };
 
 //getting for if a character is offstage.
-exports.getIsCharacterOffstage = function (characterName) {
+/*--*/ var getIsCharacterOffstage = function (characterName) {
     if (offstageCharacters.indexOf(characterName) === -1) {
         //they are not offstage
         return false;
@@ -723,7 +726,7 @@ exports.getIsCharacterOffstage = function (characterName) {
 };
 
 //set a character to be eliminated
-exports.eliminateCharacter = function (characterName) {
+/*--*/ var eliminateCharacter = function (characterName) {
     //TODO: Validate that 'characterName' is a valid character in this system.
     if (eliminatedCharacters.indexOf(characterName) === -1) {
         //Alright, let's add them to the eliminated list...
@@ -745,7 +748,7 @@ exports.eliminateCharacter = function (characterName) {
 };
 
 //getter for if a character is eliminated.
-exports.getIsCharacterEliminated = function (characterName) {
+/*--*/ var getIsCharacterEliminated = function (characterName) {
     if (eliminatedCharacters.indexOf(characterName) === -1) {
         //they are not eliminated
         return false;
@@ -754,7 +757,7 @@ exports.getIsCharacterEliminated = function (characterName) {
 };
 
 //takes a character OFF of the offstage list.
-exports.putCharacterOnstage = function (characterName) {
+/*--*/ var putCharacterOnstage = function (characterName) {
     var index = offstageCharacters.indexOf(characterName);
     if (index !== -1) {
         //They used to be offstage -- let's put them onstage!
@@ -762,14 +765,14 @@ exports.putCharacterOnstage = function (characterName) {
     }
 };
 
-exports.removeAllSocialFactsFromCharacter = function (characterName) {
+/*--*/ var removeAllSocialFactsFromCharacter = function (characterName) {
     //TODO: Validate that characterName is an actual character in the system.
     removeDirectedSocialFacts(characterName);
     removeReciprocalSocialFacts(characterName);
     removeUndirectedSocialFacts(characterName);
 };
 
-exports.removeUndirectedSocialFacts = function (characterName) {
+/*--*/ var removeUndirectedSocialFacts = function (characterName) {
     var indicesToRemove = [];
     for (var i = 0; i < socialRecord[currentTimeStep].length; i += 1) {
         var socialFact = socialRecord[currentTimeStep][i];
@@ -785,7 +788,7 @@ exports.removeUndirectedSocialFacts = function (characterName) {
     }
 };
 
-exports.removeDirectedSocialFacts = function (characterName) {
+/*--*/ var removeDirectedSocialFacts = function (characterName) {
     //TODO: Validate that characterName is an actual character in the system.
     var indicesToRemove = [];
     for (var i = 0; i < socialRecord[currentTimeStep].length; i += 1) {
@@ -804,7 +807,7 @@ exports.removeDirectedSocialFacts = function (characterName) {
     }
 };
 
-exports.removeReciprocalSocialFacts = function (characterName) {
+/*--*/ var removeReciprocalSocialFacts = function (characterName) {
     //TODO: Validate that characterName is an actual character in the system.
     var indicesToRemove = [];
     for (var i = 0; i < socialRecord[currentTimeStep].length; i += 1) {
@@ -823,20 +826,20 @@ exports.removeReciprocalSocialFacts = function (characterName) {
     }
 };
 
-exports.getOffstageCharacters = function () {
+/*--*/ var getOffstageCharacters = function () {
     return offstageCharacters;
 };
 
-exports.getEliminatedCharacters = function () {
+/*--*/ var getEliminatedCharacters = function () {
     return eliminatedCharacters;
 };
 
 //TODO: this is now redundant with ensemble.get()
-exports.publicGet = function (predicate, earliestTime, latestTime, useDefaultValue, params) {
+/*--*/ var publicGet = function (predicate, earliestTime, latestTime, useDefaultValue, params) {
     return get(predicate, earliestTime, latestTime, useDefaultValue, params);
 };
 
-exports.init = function (initialTimeStep) {
+/*--*/ var init = function (initialTimeStep) {
     if (initialTimeStep !== undefined) {
         currentTimeStep = initialTimeStep;
     }
@@ -844,53 +847,56 @@ exports.init = function (initialTimeStep) {
 
 };
 
-exports.socialRecordInterface = {
-    init: exports.init,
-    dumpSocialRecord: exports.dumpSocialRecord,
-    getSocialRecordCopy: exports.getSocialRecordCopy,
-    getSocialRecordCopyAtTimestep: exports.getSocialRecordCopyAtTimestep,
+/*--*/ var socialRecordInterface = {
+    init: init,
+    dumpSocialRecord: dumpSocialRecord,
+    getSocialRecordCopy: getSocialRecordCopy,
+    getSocialRecordCopyAtTimestep: getSocialRecordCopyAtTimestep,
 
-    getCurrentTimeStep: exports.getCurrentTimeStep,
+    getCurrentTimeStep: getCurrentTimeStep,
 
-    registerMaxValue: exports.registerMaxValue,
-    getRegisteredMaxValue: exports.getRegisteredMaxValue,
-    registerMinValue: exports.registerMinValue,
-    getRegisteredMinValue: exports.getRegisteredMinValue,
-    registerDuration: exports.registerDuration,
-    getRegisteredDuration: exports.getRegisteredDuration,
-    registerDirection: exports.registerDirection,
-    getRegisteredDirection: exports.getRegisteredDirection,
-    registerDefault: exports.registerDefaultValue,
-    getRegisteredDefault: exports.getRegisteredDefaultValue,
-    registerIsBoolean: exports.registerIsBoolean,
-    getRegisteredIsBoolean: exports.getRegisteredIsBoolean,
-    clearHistory: exports.clearHistory,
-    clearEverything: exports.clearEverything,
-    set: exports.set,
-    get: exports.publicGet,
-    setById: exports.setById,
-    addHistory: exports.addHistory,
-    socialRecordHistoryToString: exports.socialRecordHistoryToString,
-    socialRecordFullHistoryToString: exports.socialRecordFullHistoryToString,
-    putCharacterOffstage: exports.putCharacterOffstage,
-    putCharacterOnstage: exports.putCharacterOnstage,
-    eliminateCharacter: exports.eliminateCharacter,
-    getIsCharacterOffstage: exports.getIsCharacterOffstage,
-    getIsCharacterEliminated: exports.getIsCharacterEliminated,
-    getOffstageCharacters: exports.getOffstageCharacters,
-    getEliminatedCharacters: exports.getEliminatedCharacters,
-    setupNextTimeStep: exports.setupNextTimeStep
+    registerMaxValue: registerMaxValue,
+    getRegisteredMaxValue: getRegisteredMaxValue,
+    registerMinValue: registerMinValue,
+    getRegisteredMinValue: getRegisteredMinValue,
+    registerDuration: registerDuration,
+    getRegisteredDuration: getRegisteredDuration,
+    registerDirection: registerDirection,
+    getRegisteredDirection: getRegisteredDirection,
+    registerDefault: registerDefaultValue,
+    getRegisteredDefault: getRegisteredDefaultValue,
+    registerIsBoolean: registerIsBoolean,
+    getRegisteredIsBoolean: getRegisteredIsBoolean,
+    clearHistory: clearHistory,
+    clearEverything: clearEverything,
+    set: set,
+    get: publicGet,
+    setById: setById,
+    addHistory: addHistory,
+    socialRecordHistoryToString: socialRecordHistoryToString,
+    socialRecordFullHistoryToString: socialRecordFullHistoryToString,
+    putCharacterOffstage: putCharacterOffstage,
+    putCharacterOnstage: putCharacterOnstage,
+    eliminateCharacter: eliminateCharacter,
+    getIsCharacterOffstage: getIsCharacterOffstage,
+    getIsCharacterEliminated: getIsCharacterEliminated,
+    getOffstageCharacters: getOffstageCharacters,
+    getEliminatedCharacters: getEliminatedCharacters,
+    setupNextTimeStep: setupNextTimeStep
 };
+
+
 // See comment at top of Tests.js for explanation of below.
 
 /* test-code */
-//socialRecordInterface.currentTimeStep = currentTimeStep;
-//socialRecordInterface.getLength = getLength;
-//socialRecordInterface.getCurrentTimeStep = getCurrentTimeStep;
-//socialRecordInterface.getLengthAtTimeStep = getLengthAtTimeStep;
+socialRecordInterface.currentTimeStep = currentTimeStep;
+socialRecordInterface.getLength = getLength;
+socialRecordInterface.getCurrentTimeStep = getCurrentTimeStep;
+socialRecordInterface.getLengthAtTimeStep = getLengthAtTimeStep;
 /* end-test-code */
 
 //public things removed and turned 'private'
 //getLength 				: getLength,
 
 //return socialRecordInterface;
+module.exports = socialRecordInterface;

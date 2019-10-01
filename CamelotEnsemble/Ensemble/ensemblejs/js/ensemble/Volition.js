@@ -29,8 +29,8 @@
  * @private
  */
 
-exports.volitionCache = {};
-exports.cachePositions = {};
+/*--*/ var volitionCache = {};
+/*--*/ var cachePositions = {};
 
 /**
  * Get the highest-weighted volition in a given set, for a particular pair of characters, or return undefined if no such volition can be found.
@@ -41,7 +41,7 @@ exports.cachePositions = {};
  *
  * @return {Object}        A volition predicate, with keys "category", "network", "type", "intentType", and "weight". (Or undefined if there are no volotions for this pair of characters.)
  */
-exports.getFirstVolition = function (key, from, to) {
+/*--*/ var getFirstVolition = function (key, from, to) {
 
     // Check that we have volitions to return.
     var vSet = volitionCache[key];
@@ -74,7 +74,7 @@ exports.getFirstVolition = function (key, from, to) {
  *
  * @return {Object}        A volition predicate, with keys "category", "network", "type", "intentType", and "weight". (Or undefined if there are no more volitions for this pair of characters.)
  */
-exports.getNextVolition = function (key, from, to) {
+/*--*/ var getNextVolition = function (key, from, to) {
 
     var cachePositionsKey = key + from + to;
     var vSet = volitionCache[key];
@@ -109,7 +109,7 @@ exports.getNextVolition = function (key, from, to) {
  * 									{Boolean} accepted - whether the intent is accepted
  * 									{Array} reasonsWhy - the array of volition predicates that are the reason(s) something was accepted
  */
-exports.isAccepted = function (key, initiator, responder, predicate) {
+/*--*/ var isAccepted = function (key, initiator, responder, predicate) {
     var acceptIfNoMatch = true; // If no matching rules affect the decision, should the character accept or reject the game?
     var minimumWeightForAccept = 0;
 
@@ -148,7 +148,7 @@ exports.isAccepted = function (key, initiator, responder, predicate) {
  *
  * @return {Object}           An interface with functions "getFirst" and "getNext" to iterate through the volitions for particular pair of characters.
  */
-exports.register = function (key, volitions) {
+/*--*/ var register = function (key, volitions) {
 
     // Sort the passed-in volitions.
     //
@@ -217,7 +217,7 @@ exports.register = function (key, volitions) {
  *
  * @return {Object}      Prepared volitions object.
  */
-exports.newSet = function (cast) {
+/*--*/ var newSet = function (cast) {
     var volitionShell = {};
     if (cast === undefined) return volitionShell;
     for (var i = 0; i < cast.length; i++) {
@@ -241,7 +241,7 @@ exports.newSet = function (cast) {
  * @param  {[string]} key [The identifier of a volition set.]
  * @return {[type]}     [The volitions of the specified key.]
  */
-exports.getVolitionCacheByKey = function (key) {
+/*--*/ var getVolitionCacheByKey = function (key) {
     return volitionCache[key];
 };
 
@@ -254,11 +254,11 @@ exports.getVolitionCacheByKey = function (key) {
  * @param  {[string]} to   [The 'responder' that these volitions pertain to]
  * @return {[type]}      [The volitions from the volition set specified by key that describe what the 'from' character wants to do with the 'to' character]
  */
-exports.getAllVolitionsByKeyFromTo = function (key, from, to) {
+/*--*/ var getAllVolitionsByKeyFromTo = function (key, from, to) {
     return volitionCache[key][from][to];
 };
 
-exports.volitionInterface = {
+/*--*/ var volitionInterface = {
     newSet: newSet,
     register: register,
 };
@@ -269,4 +269,5 @@ volitionInterface.getAllVolitionsByKeyFromTo = getAllVolitionsByKeyFromTo;
 volitionInterface.isAccepted = isAccepted;
 /* end-test-code */
 
-return volitionInterface;
+//return volitionInterface;
+module.exports = volitionInterface;

@@ -29,6 +29,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="Ensemble\ensemblejs\jslib\underscore.js" />
+    <Compile Include="Ensemble\ensemblejs\jslib\util.js" />
     <Compile Include="Ensemble\ensemblejs\js\ensemble\ActionLibrary.js" />
     <Compile Include="Ensemble\ensemblejs\js\ensemble\ensemble.js" />
     <Compile Include="Ensemble\ensemblejs\js\ensemble\RuleLibrary.js" />
@@ -38,14 +40,23 @@
     <Compile Include="LoversAndRivals.js">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="Ensemble\ensemblejs\sampleGame\data\actions.json" />
+    <Content Include="Ensemble\ensemblejs\sampleGame\data\cast.json" />
+    <Content Include="Ensemble\ensemblejs\sampleGame\data\history.json" />
+    <Content Include="Ensemble\ensemblejs\sampleGame\data\schema.json" />
+    <Content Include="Ensemble\ensemblejs\sampleGame\data\triggerRules.json" />
+    <Content Include="Ensemble\ensemblejs\sampleGame\data\volitionRules.json" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Ensemble\" />
     <Folder Include="Ensemble\ensemblejs\" />
+    <Folder Include="Ensemble\ensemblejs\jslib\" />
     <Folder Include="Ensemble\ensemblejs\js\" />
     <Folder Include="Ensemble\ensemblejs\js\ensemble\" />
+    <Folder Include="Ensemble\ensemblejs\sampleGame\" />
+    <Folder Include="Ensemble\ensemblejs\sampleGame\data\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

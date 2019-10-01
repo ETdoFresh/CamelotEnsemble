@@ -1,4 +1,6 @@
-﻿var stateInformation = {
+﻿const ensemble = require('./Ensemble/ensemblejs/js/ensemble/ensemble');
+
+var stateInformation = {
     "loveToHeroCloseness": "NA",
     "loveToHeroAttraction": "NA",
     "heroToLoveCloseness": "NA",
@@ -79,7 +81,7 @@ var positionCharacter = function (id, pos) {
 var setUpLoversAndRivalsInitialState = function () {
     //update our local copies of these variables, and display them.
     updateLocalStateInformation();
-    displayStateInformation();
+    //displayStateInformation();
 };
 
 var setupCharacterPositions = function (widthOfField) {
@@ -432,3 +434,26 @@ var drawChatBubbleWritingFrame4 = function () {
     return returnString;
 };
 
+module.exports = {
+    stateInformation: stateInformation,
+    gameVariables: gameVariables,
+    move: move,
+    moveAllCharacters: moveAllCharacters,
+    moveByCharacterName: moveByCharacterName,
+    positionCharacter: positionCharacter,
+    setUpLoversAndRivalsInitialState: setUpLoversAndRivalsInitialState,
+    setupCharacterPositions: setupCharacterPositions,
+    populateActionLists: populateActionLists,
+    populateActionList: populateActionList,
+    actionButtonClicked: actionButtonClicked,
+    clearActionList: clearActionList,
+    checkForEndConditions: checkForEndConditions,
+    cleanUpUIForNewTurn: cleanUpUIForNewTurn,
+    displayStateInformation: displayStateInformation,
+    updateLocalStateInformation: updateLocalStateInformation,
+    playInstantiationAnimation: playInstantiationAnimation,
+    drawChatBubble: drawChatBubble,
+    drawChatBubbleWritingFrame2: drawChatBubbleWritingFrame2,
+    drawChatBubbleWritingFrame3: drawChatBubbleWritingFrame3,
+    drawChatBubbleWritingFrame4: drawChatBubbleWritingFrame4,
+};

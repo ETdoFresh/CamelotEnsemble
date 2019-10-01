@@ -9,7 +9,9 @@
  * @private
  */
 
-exports.ruleLibrary = {
+const util = require('../../jslib/util');
+
+/*--*/ var ruleLibrary = {
     triggerRules: [],
     volitionRules: []
 };
@@ -25,7 +27,7 @@ exports.ruleLibrary = {
  * @param {Array} cast		an array of characters we are interested in seeing if the provided rules apply to
  * @param onMatchFunction	the function that we will apply if the rule(s) are found to be true
  */
-exports.runRules = function (ruleSet, cast, onMatchFunction, params, unaffectedCharacters) {
+/*--*/ var runRules = function (ruleSet, cast, onMatchFunction, params, unaffectedCharacters) {
     var rules = ruleLibrary[ruleSet];
     if (rules === undefined) return;
     for (var i = 0; i < rules.length; i += 1) {
@@ -50,7 +52,7 @@ exports.runRules = function (ruleSet, cast, onMatchFunction, params, unaffectedC
  * @param {Array} ruleConditions	the conditions which need to have specific characters filled into roles first and (optionally) second.
  * @return {Array} dictionary		each of the conditions will be stored in this dictionary, with keys
  */
-exports.getUniqueBindings = function (ruleConditions) {
+/*--*/ var getUniqueBindings = function (ruleConditions) {
     var dictionary = {};
     for (var i = 0; i < ruleConditions.length; i += 1) {
         var predicate = ruleConditions[i];			//store the current rule condition in a temp
@@ -79,7 +81,7 @@ exports.getUniqueBindings = function (ruleConditions) {
  * @param {Function} processResult 	the function which will process the result of the unique binding
  * @param {Array} rule	the particular rule that needs to be applied
  */
-exports.matchUniqueBindings = function (uniqueBindings, availableCastMembers, processResult, rule, params, unaffectedCharacters) {
+/*--*/ var matchUniqueBindings = function (uniqueBindings, availableCastMembers, processResult, rule, params, unaffectedCharacters) {
     var isFilled = true;
     var emptyKey = "";
 
@@ -170,12 +172,12 @@ exports.matchUniqueBindings = function (uniqueBindings, availableCastMembers, pr
  * @return {Boolean} conditionsAreTrue Returns true if all of the predicates in the conditions array is true. Returns False otherwise.
  */
 /*
-exports.evaluateConditions = function(conditionsArray, rule, params){
+/*--*/ var evaluateConditions = function (conditionsArray, rule, params) {
     var orderedConditions = [];
     var conditions = util.clone(conditionsArray);
     var counter = conditions.length;
 
-    for (var i = 0 ; i < counter ; i += 1) {
+    for (var i = 0; i < counter; i += 1) {
 
         // in the case of an ordered condition array, if a mistake was made and there is a gap
         // i.e. 1,2,4,5, skip the undefined entry and continue
@@ -189,22 +191,22 @@ exports.evaluateConditions = function(conditionsArray, rule, params){
         var latestTime = 0;
 
         //Let's do it with default time steps too!
-        if(condition.timeEarliest !== undefined){
+        if (condition.timeEarliest !== undefined) {
             earlyTime = condition.timeEarliest;
         }
-        if(condition.timeLatest !== undefined){
+        if (condition.timeLatest !== undefined) {
             latestTime = condition.timeLatest;
         }
 
         // Put the ordered conditions in an ordered array
-    	
-        if(condition.order !== undefined) {
+
+        if (condition.order !== undefined) {
             var tempCondition = util.clone(condition);
-            if (tempCondition.order === -1){
+            if (tempCondition.order === -1) {
                 delete tempCondition.order;
                 delete tempCondition.timeEarliest;
                 delete tempCondition.timeLatest;
-                if(tempCondition.class === "SFDBLabel"){
+                if (tempCondition.class === "SFDBLabel") {
                     console.log("Dealing with my thing...");
                 }
                 var results = sfdb.get(tempCondition, earlyTime, latestTime);
@@ -213,8 +215,8 @@ exports.evaluateConditions = function(conditionsArray, rule, params){
                 }
                 else {
                     // only do this if the next condition is defined, otherwise we're done!
-                    if(conditions[i+1] !== undefined) {
-                        conditions[i+1].timeLatest -= results[0].timeFoundOffset;	// this offset is the time that the predicate was found
+                    if (conditions[i + 1] !== undefined) {
+                        conditions[i + 1].timeLatest -= results[0].timeFoundOffset;	// this offset is the time that the predicate was found
                     }																// less the earliest time the get method started looking for it
                     continue;														// e.g. we are at time step 10, earliestTime = 4, so we began looking for
                 }																	// it at time step 6, found it at step 7, so 7-6 gives us an offset of 1
@@ -234,9 +236,9 @@ exports.evaluateConditions = function(conditionsArray, rule, params){
         //more common case). There may be enough of these conventions that it should be
         //separated out into it's own file, but for now, let's just do the status thing.
         // TODO: change to default value here
-        if(condition.value === undefined && sfdb.getRegisteredIsBoolean(condition) === true) {
-              //condition.value = sfdb.getRegisteredDefault(condition);
-              condition.value = true;
+        if (condition.value === undefined && sfdb.getRegisteredIsBoolean(condition) === true) {
+            //condition.value = sfdb.getRegisteredDefault(condition);
+            condition.value = true;
         }
         //condition.earliestTime and condition.latestTime mess up 'get', because things STORED in the
         //sfdb don't have earliest and latest times, so they don't match. delete them for now, and give them back
@@ -266,17 +268,17 @@ exports.evaluateConditions = function(conditionsArray, rule, params){
         }
     }
 
-    if(orderedConditions.length > 0){
+    if (orderedConditions.length > 0) {
         return evaluateConditions(orderedConditions);
     }
 
     //If we got here, that means that we want to return true -- all of the conditions checked out!
     return true;
-};*/
+};
 
 //TODO: Write a function comment block for this guy
 //TODO: Do we still use 'rule' and 'params' here!?!? Can we get rid of them!?!
-exports.evaluateConditions = function (conditionsArray, rule, params) {
+/*--*/ var evaluateConditions = function (conditionsArray, rule, params) {
 
     // if(conditionsArray.length >= 3 && conditionsArray[2].class === "SFDBLabel" && conditionsArray[2].first === "clara" && conditionsArray[2].second === "reggie"){
     // 	console.log("match..");
@@ -410,7 +412,7 @@ exports.evaluateConditions = function (conditionsArray, rule, params) {
  * @param  {[array]} conditions [An array filled with the condition predicates from a rule]
  * @return {[array]}            [The conditions sorted on the key "order" in ascending order (undefined orders will appear first in the array.)]
  */
-exports.sortConditionsByOrder = function (conditions) {
+/*--*/ var sortConditionsByOrder = function (conditions) {
     var nonOrderConditions = [];
     var orderConditions = [];
     var sortedConditions = [];
@@ -451,7 +453,7 @@ exports.sortConditionsByOrder = function (conditions) {
  * @param {Object} predicates	a clone of the array of predicates that needs characters assigned to each of its roles
  * @return {Array} resultsArray an array of the conditions that have characters bound to their roles
  */
-exports.doBinding = function (characters, predicates) {
+/*--*/ var doBinding = function (characters, predicates) {
     var resultsArray = [];	//array to hold our conditions that have characters bound to roles in each entry
     for (var i = 0; i < predicates.length; i += 1) {
         var predicate = predicates[i];	// current predicate to consider
@@ -479,7 +481,7 @@ exports.doBinding = function (characters, predicates) {
  var triggerResults = ensemble.runTriggerRules(cast, params); //the act of calling runTriggerRules has now changed the state.
  * @return {Object} An object representing the changes made to the social state as a result of running these trigger rules.
  */
-exports.runTriggerRules = function (cast, params) {
+/*--*/ var runTriggerRules = function (cast, params) {
     // Construct an array of fired trigger rules.
     var triggerObj = {};
     triggerObj.explanations = [];
@@ -536,7 +538,7 @@ exports.runTriggerRules = function (cast, params) {
  * @param  {[Array]} charactersToIgnore [A list of characters that have been deemed to be ignored.]
  * @return {[Bool]}                    [Returns true if the effect is 'safe' to be set or used for volition. False otherwise.]
  */
-exports.isEffectValid = function (effect, charactersToIgnore) {
+/*--*/ var isEffectValid = function (effect, charactersToIgnore) {
     for (var i = 0; i < charactersToIgnore.length; i += 1) {
         if (effect.first !== undefined) {
             if (effect.first === charactersToIgnore[i]) {
@@ -563,7 +565,7 @@ exports.isEffectValid = function (effect, charactersToIgnore) {
  * @example var storedVolitions = ensemble.calculateVolition(cast); 
  *@return {Object} A dictionary containing the cast and their volitions
  */
-exports.calculateVolition = function (cast, params) {
+/*--*/ var calculateVolition = function (cast, params) {
 
     // We punt most of the work of dealing with the volitions object to the Volitions module. More documentation is there. The object we get below is a dictionary with a [first][second] structure for every combination of cast pairs, with the contents initially an empty array which we will add volition predicates to.
     var calculatedVolitions = volition.newSet(cast);
@@ -720,7 +722,7 @@ exports.calculateVolition = function (cast, params) {
  * @param {String} key The identifier for this set of rules.
  * @param {Array} set The array containing the rule object definitions.
  */
-exports.addRuleSet = function (key, set) {
+/*--*/ var addRuleSet = function (key, set) {
     if (ruleIndexes[key] === undefined) {
         ruleIndexes[key] = {};
     }
@@ -740,7 +742,7 @@ exports.addRuleSet = function (key, set) {
     }
 };
 
-exports.ruleIndexes = {};
+/*--*/ var ruleIndexes = {};
 
 /**
  * @descriptionStores a new rule in the appropriate key in last spot in the rules library.
@@ -749,7 +751,7 @@ exports.ruleIndexes = {};
  * @param {String} key The identifier for this set of rules.
  * @param {Object} rule The object containing the rule definition to add.
  */
-exports.addRule = function (key, rule) {
+/*--*/ var addRule = function (key, rule) {
     if (ruleLibrary[key] === undefined) {
         ruleLibrary[key] = [];
     }
@@ -772,7 +774,7 @@ exports.addRule = function (key, rule) {
  *
  * @return if the rule already exists in the rule set, returns a copy of that rule. Otherwise returns false.
  */
-exports.isRuleAlreadyInRuleSet = function (key, rule) {
+/*--*/ var isRuleAlreadyInRuleSet = function (key, rule) {
     //Let's loop through all of the rules at this spot in the ruleLibrary, and see if this rule already lives inside of it.
     var storedRule;
     var couldBeDuplicateRule = true;
@@ -805,11 +807,12 @@ exports.isRuleAlreadyInRuleSet = function (key, rule) {
  * @param {Object} pred2 The second of the two predicates we are testing for equality.
  * @return true if pred1 and pred2 are equal. False otherwise.
  */
-exports.arePredicatesEqual = function (pred1, pred2) {
+/*--*/ var arePredicatesEqual = function (pred1, pred2) {
 
     //first simple test! do these two guys have the same number of attributes?
     //If not, then heck, we know they are definitely not equal.
-    if (_.size(pred1) !== _.size(pred2)) {
+    //if (_.size(pred1) !== _.size(pred2)) {
+    if (pred1.length !== pred2.length) {
         return false;
     }
 
@@ -845,7 +848,7 @@ exports.arePredicatesEqual = function (pred1, pred2) {
  * @param{object} rule2 the second of the two rules we are comparing
  * @return true if the two rules are equal, false if otherwise.
  */
-exports.areRulesEqual = function (rule1, rule2) {
+/*--*/ var areRulesEqual = function (rule1, rule2) {
 
     //first, let's do the easy check to see if the lengths of the conditions and/or effects are different.
     //Made, I suppose, a little more complicated because some rules might not have conditions or effects specified.
@@ -911,7 +914,7 @@ exports.areRulesEqual = function (rule1, rule2) {
  *@return {String}      A string with an english description of the contents of the rule.
  * 
  */
-exports.ruleToEnglish = function (rule) {
+/*--*/ var ruleToEnglish = function (rule) {
     var returnString = "If: ";
     returnString += predicateArrayToEnglish(rule.conditions, false);
     returnString += ", Then: ";
@@ -921,7 +924,7 @@ exports.ruleToEnglish = function (rule) {
 
 
 
-exports.predicateArrayToEnglish = function (conditions, isEffect) {
+/*--*/ var predicateArrayToEnglish = function (conditions, isEffect) {
     var returnString = "";
     for (var i = 0; i < conditions.length; i += 1) {
         if (i >= 1) {
@@ -945,7 +948,7 @@ exports.predicateArrayToEnglish = function (conditions, isEffect) {
  *@return {String}      A string with an english description of the contents of the predicate.
  * 
  */
-exports.predicateToEnglish = function (pred) {
+/*--*/ var predicateToEnglish = function (pred) {
     var result = [];
     var addPhrase = function (text, label, optMeta) {
         var ph = {};
@@ -1129,7 +1132,7 @@ exports.predicateToEnglish = function (pred) {
  *
  * @return {array} an array of rules representing the ruleLibrary's current collection of triggerRules
  */
-exports.getTriggerRules = function () {
+/*--*/ var getTriggerRules = function () {
     if (ruleLibrary.triggerRules) {
         return util.clone(ruleLibrary.triggerRules);
     } else {
@@ -1146,7 +1149,7 @@ exports.getTriggerRules = function () {
  *
  * @return {array} an array of rules representing the ruleLibrary's current collection of volitionRules
  */
-exports.getVolitionRules = function () {
+/*--*/ var getVolitionRules = function () {
     if (ruleLibrary.volitionRules) {
         return util.clone(ruleLibrary.volitionRules);
     } else {
@@ -1155,7 +1158,7 @@ exports.getVolitionRules = function () {
 };
 
 // Internal function used to both get and set rules by id: in both cases, first validates that the requested rule exists, before carrying out the relevant operation.
-exports._alterRule = function (label, rule) {
+/*--*/ var _alterRule = function (label, rule) {
     var labelParts = label.split("_");
     var ruleSet = labelParts[0];
     var id = labelParts[1];
@@ -1212,7 +1215,7 @@ exports._alterRule = function (label, rule) {
  * 	 
  * @return {Object}	a copy of the requested rule, or false if no such rule could be found.
  */
-exports.getRuleById = function (label) {
+/*--*/ var getRuleById = function (label) {
     return _alterRule(label);
 }
 
@@ -1228,7 +1231,7 @@ exports.getRuleById = function (label) {
  *  
  * @return {Boolean}	true if the rule was successfully updated, false otherwise.
  */
-exports.setRuleById = function (label, rule) {
+/*--*/ var setRuleById = function (label, rule) {
     return _alterRule(label, rule);
 }
 
@@ -1243,12 +1246,12 @@ exports.setRuleById = function (label, rule) {
  * 	 
  * @return {Object}	true if the operation is successful, false otherwise.
  */
-exports.deleteRuleById = function (label) {
+/*--*/ var deleteRuleById = function (label) {
     if (label === undefined) return false;
     return _alterRule(label, true);
 }
 
-exports.clearRuleLibrary = function () {
+/*--*/ var clearRuleLibrary = function () {
     ruleLibrary = {};
     ruleIndexes = {};
     triggerRules = [];
@@ -1256,32 +1259,33 @@ exports.clearRuleLibrary = function () {
     util.resetIterator("rules");
 }
 
-exports.ruleLibraryInterface = {
+/*--*/ var ruleLibraryInterface = {
 
-    predicateToEnglish: exports.predicateToEnglish,
-    runTriggerRules: exports.runTriggerRules,
-    calculateVolition: exports.calculateVolition,
-    addRuleSet: exports.addRuleSet,
-    ruleToEnglish: exports.ruleToEnglish,
+    predicateToEnglish: predicateToEnglish,
+    runTriggerRules: runTriggerRules,
+    calculateVolition: calculateVolition,
+    addRuleSet: addRuleSet,
+    ruleToEnglish: ruleToEnglish,
 
-    getTriggerRules: exports.getTriggerRules,
-    getVolitionRules: exports.getVolitionRules,
-    getRuleById: exports.getRuleById,
-    setRuleById: exports.setRuleById,
-    deleteRuleById: exports.deleteRuleById,
+    getTriggerRules: getTriggerRules,
+    getVolitionRules: getVolitionRules,
+    getRuleById: getRuleById,
+    setRuleById: setRuleById,
+    deleteRuleById: deleteRuleById,
 
-    clearRuleLibrary: exports.clearRuleLibrary
+    clearRuleLibrary: clearRuleLibrary
 };
 
 /* test-code */
-//ruleLibraryInterface.getUniqueBindings = getUniqueBindings;
-//ruleLibraryInterface.matchUniqueBindings = matchUniqueBindings;
-//ruleLibraryInterface.doBinding = doBinding;
-//ruleLibraryInterface.evaluateConditions = evaluateConditions;
-//ruleLibraryInterface.arePredicatesEqual = arePredicatesEqual;
-//ruleLibraryInterface.areRulesEqual = areRulesEqual;
-//ruleLibraryInterface.isRuleAlreadyInRuleSet = isRuleAlreadyInRuleSet;
-//ruleLibraryInterface.sortConditionsByOrder = sortConditionsByOrder;
+ruleLibraryInterface.getUniqueBindings = getUniqueBindings;
+ruleLibraryInterface.matchUniqueBindings = matchUniqueBindings;
+ruleLibraryInterface.doBinding = doBinding;
+ruleLibraryInterface.evaluateConditions = evaluateConditions;
+ruleLibraryInterface.arePredicatesEqual = arePredicatesEqual;
+ruleLibraryInterface.areRulesEqual = areRulesEqual;
+ruleLibraryInterface.isRuleAlreadyInRuleSet = isRuleAlreadyInRuleSet;
+ruleLibraryInterface.sortConditionsByOrder = sortConditionsByOrder;
 /* end-test-code */
 
 //return ruleLibraryInterface;
+module.exports = ruleLibraryInterface;

@@ -3,12 +3,12 @@
  *
  */
 
-exports.allowedDirTypes = ["directed", "undirected", "reciprocal"];
-exports.allowedOpsConditions = [">", "<", "="];
-exports.allowedOpsEffects = ["+", "-", "="];
-exports.allowedTurnConstants = ["now", "start"];
+/*--*/ var allowedDirTypes = ["directed", "undirected", "reciprocal"];
+/*--*/ var allowedOpsConditions = [">", "<", "="];
+/*--*/ var allowedOpsEffects = ["+", "-", "="];
+/*--*/ var allowedTurnConstants = ["now", "start"];
 
-exports.socialStructure;
+/*--*/ var socialStructure;
 /**
  * @method registerSocialStructure
  * @memberOf Validate
@@ -17,7 +17,7 @@ exports.socialStructure;
  * @param  {Object} ss     A reference to the social schema registered in ensemble.
  *
  */
-exports.registerSocialStructure = function (ss) {
+/*--*/ var registerSocialStructure = function (ss) {
     socialStructure = ss;
 };
 
@@ -31,7 +31,7 @@ exports.registerSocialStructure = function (ss) {
  *
  * @return {Object}          The same predicate reference passed in, if valid.
  */
-exports.triggerCondition = function (pred, preamble) {
+/*--*/ var triggerCondition = function (pred, preamble) {
     checkPredicate(pred, "condition", "trigger", preamble);
     return pred;
 };
@@ -46,7 +46,7 @@ exports.triggerCondition = function (pred, preamble) {
  *
  * @return {Object}          The same predicate reference passed in, if valid.
  */
-exports.triggerEffect = function (pred, preamble) {
+/*--*/ var triggerEffect = function (pred, preamble) {
     checkPredicate(pred, "effect", "trigger", preamble);
     return pred;
 };
@@ -61,7 +61,7 @@ exports.triggerEffect = function (pred, preamble) {
  *
  * @return {Object}          The same predicate reference passed in, if valid.
  */
-exports.volitionCondition = function (pred, preamble) {
+/*--*/ var volitionCondition = function (pred, preamble) {
     checkPredicate(pred, "condition", "volition", preamble);
     return pred;
 };
@@ -76,7 +76,7 @@ exports.volitionCondition = function (pred, preamble) {
  *
  * @return {Object}          The same predicate reference passed in, if valid.
  */
-exports.volitionEffect = function (pred, preamble) {
+/*--*/ var volitionEffect = function (pred, preamble) {
     checkPredicate(pred, "effect", "volition", preamble);
     return pred;
 };
@@ -92,7 +92,7 @@ exports.volitionEffect = function (pred, preamble) {
  * @return {Object}          The same predicate reference passed in, if valid.
  */
 
-exports.blueprint = function (pred, preamble) {
+/*--*/ var blueprint = function (pred, preamble) {
     checkPredicate(pred, "blueprint", "", preamble);
     return pred;
 };
@@ -106,7 +106,7 @@ exports.blueprint = function (pred, preamble) {
  *
  * @return {Object}          Either an object if valid (the original rule) or a string if invalid (the error message).
  */
-exports.rule = function (rule) {
+/*--*/ var rule = function (rule) {
     var isVolition = rule.effects[0].weight !== undefined;
     var effectValidator = isVolition ? volitionEffect : triggerEffect;
     var conditionValidator = isVolition ? volitionCondition : triggerCondition;
@@ -138,8 +138,8 @@ exports.rule = function (rule) {
  * 
  * @return {[Object]}          [The same predicate reference passed in, if valid.]
  */
-exports.action = function (pred, preamble) {
-    console.log("TODO: Make Validate for reading in actions!");
+/*--*/ var action = function (pred, preamble) {
+    //console.log("TODO: Make Validate for reading in actions!");
     //checkPredicate(pred, "action", "", preamble);
     return pred;
 }
@@ -157,7 +157,7 @@ exports.action = function (pred, preamble) {
  *
  * @return {Boolean}          Returns false (the result of isPredBad) or throws an error.
  */
-exports.checkPredicate = function (pred, type, category, preamble) {
+/*--*/ var checkPredicate = function (pred, type, category, preamble) {
     var result = isPredBad(pred, type, category);
     if (result !== false) {
         console.log("Bad predicate: ", pred);
@@ -166,10 +166,11 @@ exports.checkPredicate = function (pred, type, category, preamble) {
     return result;
 };
 
-exports.isPredBad = function (predicate, type, category) {
+/*--*/ var isPredBad = function (predicate, type, category) {
 
     // Make a local copy of the predicate. We will strip fields out of this copy until we've validated all of them, or we are left with extra unrecognized fields.
-    var pred = util.clone(predicate);
+    //var pred = util.clone(predicate);
+    var pred = Object.assign({}, predicate);
 
     // Create a variable to store information about what went wrong with the predicate.
     var msg = "";
@@ -204,7 +205,8 @@ exports.isPredBad = function (predicate, type, category) {
 
     // Handle blueprints.
     if (type === "blueprint") {
-        if (!util.isArray(pred.types) || pred.types.length === 0 || typeof pred.types[0] !== "string") {
+        //if (!util.isArray(pred.types) || pred.types.length === 0 || typeof pred.types[0] !== "string") {
+        if (!Array.isArray(pred.types) || pred.types.length === 0 || typeof pred.types[0] !== "string") {
             return "key 'types' should be a non-empty array of strings; was '" + pred.types + "'";
         }
         delete pred.types;
@@ -212,12 +214,14 @@ exports.isPredBad = function (predicate, type, category) {
         if (isTypeWrong(pred, "isBoolean", "boolean", true)) return msg;
         if (isTypeWrong(pred, "directionType", "string", true)) return msg;
         if (allowedDirTypes.indexOf(pred.directionType) < 0) {
-            return "directionType was '" + pred.directionType + "' but it should have been one of " + util.listWriter(allowedDirTypes);
+            //return "directionType was '" + pred.directionType + "' but it should have been one of " + util.listWriter(allowedDirTypes);
+            return "directionType was '" + pred.directionType + "' but it should have been one of " + allowedDirTypes.join(",");
         }
         delete pred.directionType;
 
         if (isTypeWrong(pred, "duration", "number", false)) return msg;
-        if (pred.duration !== undefined && (pred.duration < 1 || !util.isInt(pred.duration))) {
+        //if (pred.duration !== undefined && (pred.duration < 1 || !util.isInt(pred.duration))) {
+        if (pred.duration !== undefined && (pred.duration < 1 || !Number.isInteger(pred.duration))) {
             return "duration was '" + pred.duration + "' which does not seem to be an integer > 0.";
         }
         delete pred.duration;
@@ -270,7 +274,8 @@ exports.isPredBad = function (predicate, type, category) {
         var okayOps = type === "condition" ? allowedOpsConditions : allowedOpsEffects;
 
         if (pred.operator !== undefined && okayOps.indexOf(pred.operator) < 0) {
-            return "unrecognized operator: '" + pred.operator + "'. In " + type + " predicates, the only valid operators are " + util.listWriter(okayOps);
+            //return "unrecognized operator: '" + pred.operator + "'. In " + type + " predicates, the only valid operators are " + util.listWriter(okayOps);
+            return "unrecognized operator: '" + pred.operator + "'. In " + type + " predicates, the only valid operators are " + okayOps.join(",");
         }
         delete pred.operator;
 
@@ -328,7 +333,8 @@ exports.isPredBad = function (predicate, type, category) {
                             return validmsg + "; instead saw string '" + tab[pos] + "'";
                         }
                     } else if (typeof tab[pos] === "number") {
-                        if (!util.isInt(tab[pos])) {
+                        //if (!util.isInt(tab[pos])) {
+                        if (!Number.isInteger(tab[pos])) {
                             return validmsg + "; instead saw number '" + tab[pos] + "'"
                         }
                         if (tab[pos] < 0) {
@@ -349,7 +355,8 @@ exports.isPredBad = function (predicate, type, category) {
             }
 
             if (isTypeWrong(pred, "order", "number", false)) return msg;
-            if (pred.order && (!util.isInt(pred.order) || pred.order < 0)) {
+            //if (pred.order && (!util.isInt(pred.order) || pred.order < 0)) {
+            if (pred.order && (!Number.isInteger(pred.order) || pred.order < 0)) {
                 return "key order: '" + pred.order + "' seems not to be a positive integer";
             }
             delete pred.order;
@@ -372,7 +379,8 @@ exports.isPredBad = function (predicate, type, category) {
 
     // Look for extra keys.
     delete pred.comment;
-    var remainingKeys = _.keys(pred);
+    //var remainingKeys = _.keys(pred);
+    var remainingKeys = Object.keys(pred);
     for (var i = 0; i < remainingKeys.length; i++) {
         if (pred[remainingKeys[i]] !== undefined) {
             return "found unexpected key for " + type + " predicate: '" + remainingKeys[i] + "'";
@@ -381,21 +389,21 @@ exports.isPredBad = function (predicate, type, category) {
     return false;
 };
 
-exports.validateInterface = {
+/*--*/ var validateInterface = {
 
-    rule: exports.rule,
-    triggerCondition: exports.triggerCondition,
-    triggerEffect: exports.triggerEffect,
-    volitionCondition: exports.volitionCondition,
-    volitionEffect: exports.volitionEffect,
-    blueprint: exports.blueprint,
-    action: exports.action,
+    rule: rule,
+    triggerCondition: triggerCondition,
+    triggerEffect: triggerEffect,
+    volitionCondition: volitionCondition,
+    volitionEffect: volitionEffect,
+    blueprint: blueprint,
+    action: action,
 
-    registerSocialStructure: exports.registerSocialStructure
-
+    registerSocialStructure: registerSocialStructure
 };
 
 /* test-code */
 /* end-test-code */
 
 // return validateInterface;
+module.exports = validateInterface;

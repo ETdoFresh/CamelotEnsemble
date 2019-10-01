@@ -9,7 +9,9 @@
  * @class ensemble
  */
 
-//const util = require('../../jslib/util');
+const fs = require('fs');
+const underscore = require('../../jslib/underscore');
+const util = require('../../jslib/util');
 const ruleLibrary = require('./RuleLibrary');
 const actionLibrary = require('./ActionLibrary');
 const socialRecord = require('./socialRecord');
@@ -26,7 +28,7 @@ const validate = require('./Validate');
  * 
  * @return {Object} An object with an interface to the loaded factories.
  */
-exports.loadBaseBlueprints = function (bp) {
+/*--*/ var loadBaseBlueprints = function (bp) {
     socialRecord.clearEverything();
     return loadSocialStructure(bp);
 };
@@ -45,28 +47,30 @@ exports.loadBaseBlueprints = function (bp) {
  * 
  * @return {Object} A JSON object representing the parsed contents of the filename.
  */
-exports.loadFile = function (filename) {
+/*--*/ var loadFile = function (filename) {
 
-    var fileResults;
+    //var fileResults;
 
-    if (!window.XMLHttpRequest) {
-        console.log("Browser doesn't support XMLHttpRequest.");
-        return false;
-    }
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            fileResults = JSON.parse(xmlhttp.responseText);
-        } else {
-            console.log("xmlhttp not ready!");
-            return false;
-        }
-    }
+    //if (!window.XMLHttpRequest) {
+    //    console.log("Browser doesn't support XMLHttpRequest.");
+    //    return false;
+    //}
+    //xmlhttp = new XMLHttpRequest();
+    //xmlhttp.onreadystatechange = function () {
+    //    if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+    //        fileResults = JSON.parse(xmlhttp.responseText);
+    //    } else {
+    //        console.log("xmlhttp not ready!");
+    //        return false;
+    //    }
+    //}
 
-    xmlhttp.open("GET", filename, false); // false = synchronously
-    xmlhttp.send();
+    //xmlhttp.open("GET", filename, false); // false = synchronously
+    //xmlhttp.send();
 
-    return fileResults;
+    //return fileResults;
+    var data = fs.readFileSync(filename, 'utf8');
+    return JSON.parse(data);
 }
 
 
@@ -80,7 +84,7 @@ exports.loadFile = function (filename) {
 *
 * @return {Object} A copy of the blueprint.
 */
-exports.registerSocialType = function (blueprint) {
+/*--*/ var registerSocialType = function (blueprint) {
     var factory = {};
     factory.category = blueprint.category;
     factory.type = blueprint.type;
@@ -95,7 +99,7 @@ exports.registerSocialType = function (blueprint) {
     return factory;
 }
 
-exports.socialStructure;
+/*--*/ var socialStructure;
 
 /**
  * @method loadSocialStructure
@@ -111,7 +115,7 @@ exports.socialStructure;
 var schema = ensemble.loadSocialStructure(rawSchema);
  * @return {Object} An object with parameters for each category name specified in the data file.
  */
-exports.loadSocialStructure = function (data) {
+/*--*/ var loadSocialStructure = function (data) {
     var structure = {};
 
     var blueprints;
@@ -164,7 +168,7 @@ exports.loadSocialStructure = function (data) {
  * @param	{Number}	When loading multiple blueprints, can pass an ID number to be printed if necessary for diagnostics.
  * 
  */
-exports.loadBlueprint = function (categoryBlueprint, num) {
+/*--*/ var loadBlueprint = function (categoryBlueprint, num) {
 
     // Error Checking
     if (socialStructure[categoryBlueprint.category]) {
@@ -184,7 +188,8 @@ exports.loadBlueprint = function (categoryBlueprint, num) {
     socialStructure[categoryBlueprint.category] = {};
     for (var j = 0; j < categoryBlueprint.types.length; j++) {
         var type = categoryBlueprint.types[j].toLowerCase();
-        var typeBlueprint = util.clone(categoryBlueprint);
+        //var typeBlueprint = util.clone(categoryBlueprint);
+        var typeBlueprint = Object.assign({}, categoryBlueprint);
         typeBlueprint.type = type;
         socialStructure[categoryBlueprint.category][type] = registerSocialType(typeBlueprint);
     }
@@ -200,7 +205,7 @@ exports.loadBlueprint = function (categoryBlueprint, num) {
    * @param  {Object} blueprint	A new specification for this category, in the same format as blueprints passed into loadSocialStructure. If this is undefined, the old category will simply be deleted.
    *
  */
-exports.updateCategory = function (categoryKey, blueprint) {
+/*--*/ var updateCategory = function (categoryKey, blueprint) {
     delete socialStructure[categoryKey];
     if (blueprint) {
         loadBlueprint(blueprint, 0);
@@ -216,7 +221,7 @@ exports.updateCategory = function (categoryKey, blueprint) {
  * @example ensemble.getSocialStructure();
  * @return {Object} A dictionary with top level keys will be each of the social "categories" (a la "relationship", "network", etc.). Each of these contains a dictionary of its subtypes. 
  */
-exports.getSocialStructure = function () {
+/*--*/ var getSocialStructure = function () {
     return socialStructure;
 }
 
@@ -227,7 +232,7 @@ exports.getSocialStructure = function () {
  * @description Returns an object describing the active social structure in the same format as the original file: 
  * @return {Array} An array of objects, one for each category, with a field "types" with all the type name for that category, etc. (see format for loadSocialStructure)
  */
-exports.getSchema = function () {
+/*--*/ var getSchema = function () {
     var schemaItems = [];
     for (var catKey in socialStructure) {
         if (catKey === "schemaOrigin") {
@@ -262,7 +267,7 @@ exports.getSchema = function () {
  * @example var categoryDescriptors = ensemble.getCategoryDescriptors("traits");
  * @return {Object} A dictionary with keys for each piece of metadata about the social category: "directionType" will be directed, undirected, or reciprocal; "isBoolean" will be true or false (false = numeric). 
  */
-exports.getCategoryDescriptors = function (categoryName) {
+/*--*/ var getCategoryDescriptors = function (categoryName) {
     var descriptors = {};
     var c = socialStructure[categoryName];
     if (c === undefined) {
@@ -298,7 +303,7 @@ exports.getCategoryDescriptors = function (categoryName) {
 //
 // @return {String} The name of the social category to which that type belongs (i.e. "relationships"), or false if none was found. 
 //
-exports.getCategoryFromType = function (type) {
+/*--*/ var getCategoryFromType = function (type) {
     for (var categoryName in socialStructure) {
         if (socialStructure[categoryName][type] !== undefined) {
             return categoryName;
@@ -319,7 +324,7 @@ exports.getCategoryFromType = function (type) {
 }
  * @return {Boolean} True if the type is in the category, false otherwise.
  */
-exports.isValidTypeForCategory = function (type, categoryName) {
+/*--*/ var isValidTypeForCategory = function (type, categoryName) {
     var cn = socialStructure[categoryName];
     if (cn === undefined) return false;
     if (cn[type] === undefined) return false;
@@ -327,7 +332,7 @@ exports.isValidTypeForCategory = function (type, categoryName) {
 };
 
 
-exports.getSortedTurnsTuple = function (tab) {
+/*--*/ var getSortedTurnsTuple = function (tab) {
     var t0Val = tab[0];
     var t1Val = tab[1];
     if (t0Val === "START") {
@@ -350,7 +355,7 @@ exports.getSortedTurnsTuple = function (tab) {
     return tab;
 };
 
-exports.savedChars;
+/*--*/ var savedChars;
 
 /**
  * @method addCharacters
@@ -366,7 +371,7 @@ var cast = ensemble.addCharacters(rawCast);
  *
  * @return {Array}      An array of strings with all character keys.
  */
-exports.addCharacters = function (data) {
+/*--*/ var addCharacters = function (data) {
     // STUB: For the moment we aren't doing anything with this data,
     // other than returning an array of keys.
     var charData = data;
@@ -383,8 +388,12 @@ exports.addCharacters = function (data) {
  * @example myCharacters = ensemble.getCharacters();
  * @return {Array}      An array of strings with all character keys (same as will be used in socialRecord entries, etc..
  */
-exports.getCharacters = function () {
-    return _.keys(savedChars);
+/*--*/ var getCharacters = function () {
+    //return _.keys(savedChars);
+    if (savedChars)
+        return Object.keys(savedChars);
+    else
+        return [];
 };
 
 /**
@@ -395,8 +404,9 @@ exports.getCharacters = function () {
  * @example myCharacters = ensemble.getCharactersWithMetadata();
  * @return {Object}      A dictionary with the full record of all registered characters.
  */
-exports.getCharactersWithMetadata = function () {
-    return util.clone(savedChars);
+/*--*/ var getCharactersWithMetadata = function () {
+    //return util.clone(savedChars);
+    return Object.assign({}, savedChars);
 };
 
 /**
@@ -410,7 +420,7 @@ exports.getCharactersWithMetadata = function () {
  * @exampe var bobNickname = ensemble.getCharData("bob", "name");
  * @return {Object}      The metadata value for the requested character and key, or undefined if no such key or character were found. The type of the return result is dependent on the type of the requested metadata field.
  */
-exports.getCharData = function (char, key) {
+/*--*/ var getCharData = function (char, key) {
     if (savedChars[char] === undefined) {
         return undefined;
     }
@@ -427,7 +437,7 @@ exports.getCharData = function (char, key) {
  *
  * @return {String}      The printed name of the requested character.
  */
-exports.getCharName = function (char) {
+/*--*/ var getCharName = function (char) {
     var name = getCharData(char, "name");
 
     // If name is undefined, just return the character's ID.
@@ -446,7 +456,7 @@ exports.getCharName = function (char) {
  *
  * @return {Array}      An array of strings, unique IDs for each rule added, in the form type_num (i.e. triggerRules_14). 
  */
-exports.addProcessedRules = function (ruleType, fileName, rules) {
+/*--*/ var addProcessedRules = function (ruleType, fileName, rules) {
 
     var conditionValFunc;
     var effectValFunc;
@@ -509,7 +519,7 @@ exports.addProcessedRules = function (ruleType, fileName, rules) {
 
 
 //standardize a predicate (called before validation).
-exports.standardizePredicate = function (pred) {
+/*--*/ var standardizePredicate = function (pred) {
 
     //Convert string vlaues of "intentType" to a boolean
     //(after making sure that the string value used makes sense given the pred's
@@ -596,7 +606,7 @@ var volitionRules = ensemble.addRules(rawVolitionRules);
  * @return {Array}      An array of strings, unique IDs for each rule added, in the form type_num (i.e. triggerRules_14). 
  * 
  */
-exports.addRules = function (data) {
+/*--*/ var addRules = function (data) {
     var parsedData;
     var ruleType;
     var fileName;
@@ -614,7 +624,8 @@ exports.addRules = function (data) {
     } catch (e) {
         throw new Error("JSON Error loading rules: " + e);
     }
-    console.log("parsedData", parsedData);
+
+    //console.log("parsedData", parsedData);
 
     fileName = parsedData.fileName;
     rules = parsedData.rules;
@@ -650,7 +661,7 @@ exports.addRules = function (data) {
  * @return {Object} A collection of rules registered to the specified rule set.
  * 
  */
-exports.getRules = function (ruleSet) {
+/*--*/ var getRules = function (ruleSet) {
     if (ruleSet === "trigger") {
         return ruleLibrary.getTriggerRules();
     }
@@ -678,7 +689,7 @@ var filteredRules = ensemble.filterRules(ruleSet, criterea);
  * @return {Array}      An array of matching rules. 
  * 
  */
-exports.filterRules = function (ruleSet, criteria) {
+/*--*/ var filterRules = function (ruleSet, criteria) {
     var itemsToFilter = getRules(ruleSet);
     var predicateArrays = ["conditions", "effects"];
     return _filter(itemsToFilter, predicateArrays, criteria);
@@ -697,14 +708,14 @@ var filteredActions = ensemble.filterActions(criteria)
  *@return {Array}      An array of matching actions. 
  * 
  */
-exports.filterActions = function (criteria) {
+/*--*/ var filterActions = function (criteria) {
     var itemsToFilter = actionLibrary.getAllActions();
     var predicateArrays = ["conditions", "effects", "influenceRules"];
     return _filter(itemsToFilter, predicateArrays, criteria);
 };
 
 // Internal function used by filterRules and filterActions. Given an array of records and a list of fields to check, iterates through records in those fields excluding any that don't match the given criteria.
-exports._filter = function (set, fields, criteria) {
+/*--*/ var _filter = function (set, fields, criteria) {
     return set.filter(function (record) {
         var matchFound;
         for (var key in criteria) {
@@ -731,7 +742,7 @@ exports._filter = function (set, fields, criteria) {
 }
 
 
-exports.setRuleById = function (label, rule) {
+/*--*/ var setRuleById = function (label, rule) {
 
     var ruleSet = label.split("_")[0];
 
@@ -760,7 +771,7 @@ exports.setRuleById = function (label, rule) {
 * @param {String} predicateArray an array of predicates to be added to the social record.
 @example ensemble.setPredicates(myTriggerRule.effects);
 */
-exports.setPredicates = function (predicateArray) {
+/*--*/ var setPredicates = function (predicateArray) {
     for (var i = 0; i < predicateArray.length; i += 1) {
         socialRecord.set(predicateArray[i]);
     }
@@ -780,7 +791,7 @@ exports.setPredicates = function (predicateArray) {
 @example var predicateValue = ensemble.getValue("bob", "carol", "relationship", "dating", 0, 0); 
 *@return {Number or Boolean} the value of the specified type between the specified characters. Could either be a number of boolean, as the value might be referring to a boolean type or a numeric one.
 */
-exports.getValue = function (first, second, category, type, mostRecentTime, lessRecentTime) {
+/*--*/ var getValue = function (first, second, category, type, mostRecentTime, lessRecentTime) {
     var searchPredicate = {};
     searchPredicate.first = first;
     searchPredicate.second = second;
@@ -810,7 +821,7 @@ are not provided, the system will only look at the current timestep.
 var matchedRecords = ensemble.getSocialRecord(searchPredicate, 2, 5);
 *@return {Array} matchedResults	the array holding the found predicates which match the query
 */
-exports.getSocialRecord = function (searchPredicate, mostRecentTime, lessRecentTime) {
+/*--*/ var getSocialRecord = function (searchPredicate, mostRecentTime, lessRecentTime) {
 
     // TODO: Make sure operator is not + or -
 
@@ -849,7 +860,7 @@ exports.getSocialRecord = function (searchPredicate, mostRecentTime, lessRecentT
  * @param characterName the name of the character to put off stage.
  * @example ensemble.setCharacterOffstage("bob");
  */
-exports.setCharacterOffstage = function (characterName) {
+/*--*/ var setCharacterOffstage = function (characterName) {
     socialRecord.putCharacterOffstage(characterName);
 };
 
@@ -863,7 +874,7 @@ exports.setCharacterOffstage = function (characterName) {
  * @return {Boolean} true if the character is offstage, false otherwise.
  */
 //
-exports.getIsCharacterOffstage = function (characterName) {
+/*--*/ var getIsCharacterOffstage = function (characterName) {
     return (socialRecord.getIsCharacterOffstage(characterName));
 };
 
@@ -878,7 +889,7 @@ exports.getIsCharacterOffstage = function (characterName) {
    but now needs return to it.
  * @example  ensemble.setCharacterOnstage("bob");
  */
-exports.setCharacterOnstage = function (characterName) {
+/*--*/ var setCharacterOnstage = function (characterName) {
     socialRecord.putCharacterOnstage(characterName);
 };
 
@@ -892,7 +903,7 @@ exports.setCharacterOnstage = function (characterName) {
  * @example  var isBobOnstage = ensemble.getIsCharacterOnstage("bob");
  * @return {Boolean} true if the character is on stage, false otherwise.
  */
-exports.getIsCharacterOnstage = function (characterName) {
+/*--*/ var getIsCharacterOnstage = function (characterName) {
     var characterOffstage = socialRecord.getIsCharacterOffstage(characterName);
     return (!characterOffstage);
 };
@@ -906,7 +917,7 @@ exports.getIsCharacterOnstage = function (characterName) {
  * @param characterName the name of the character to verify if they are on stage.
  * @example  ensemble.setCharacterEliminated("bob"); // Bob is now eliminated.
  */
-exports.setCharacterEliminated = function (characterName) {
+/*--*/ var setCharacterEliminated = function (characterName) {
     socialRecord.eliminateCharacter(characterName);
 };
 
@@ -920,7 +931,7 @@ exports.setCharacterEliminated = function (characterName) {
  * @example  var isBobEliminated = ensemble.getIsCharacterEliminated("bob");
  * @return {Boolean} true if the character is eliminated, false otherwise.
  */
-exports.getIsCharacterEliminated = function (characterName) {
+/*--*/ var getIsCharacterEliminated = function (characterName) {
     socialRecord.getIsCharacterEliminated(characterName);
 };
 
@@ -937,7 +948,7 @@ exports.getIsCharacterEliminated = function (characterName) {
  * @param {Object} registeredVolitions A calculated volitions object (created after calling ensemble.calculateVolitions)
  * @example  ensemble.doAction("AskOut", "Bob", "Carol", volitionObject)
  */
-exports.doAction = function (actionName, initiator, responder, registeredVolitions) {
+/*--*/ var doAction = function (actionName, initiator, responder, registeredVolitions) {
     actionLibrary.doAction(actionName, initiator, responder, registeredVolitions);
 };
 
@@ -951,7 +962,7 @@ exports.doAction = function (actionName, initiator, responder, registeredVolitio
  or else calculating volition or running trigger rules will do nothing!
  * @example ensemble.reset();
  */
-exports.reset = function () {
+/*--*/ var reset = function () {
     // Clear all social structure info.
     socialStructure = undefined;
 
@@ -980,77 +991,73 @@ exports.reset = function () {
  * @return {String} Returns a success message upon initialization.
  *
  */
-exports.init = function () {
+/*--*/ var init = function () {
     socialRecord.init();
     return "Ok";
 };
 
-exports.ensembleInterface = {
-    init: exports.init,
-    loadSocialStructure: exports.loadSocialStructure,
-    getSocialStructure: exports.getSocialStructure,
-    getSchema: exports.getSchema,
-    loadBlueprint: exports.loadBlueprint,
-    getCategoryDescriptors: exports.getCategoryDescriptors,
-    getCategoryFromType: exports.getCategoryFromType,
-    isValidTypeForCategory: exports.isValidTypeForCategory,
-    updateCategory: exports.updateCategory,
-    addCharacters: exports.addCharacters,
-    getCharacters: exports.getCharacters,
-    getCharactersWithMetadata: exports.getCharactersWithMetadata,
-    getCharData: exports.getCharData,
-    getCharName: exports.getCharName,
+/*--*/ var ensembleInterface = {
+    init: init,
+    loadSocialStructure: loadSocialStructure,
+    getSocialStructure: getSocialStructure,
+    getSchema: getSchema,
+    loadBlueprint: loadBlueprint,
+    getCategoryDescriptors: getCategoryDescriptors,
+    getCategoryFromType: getCategoryFromType,
+    isValidTypeForCategory: isValidTypeForCategory,
+    updateCategory: updateCategory,
+    addCharacters: addCharacters,
+    getCharacters: getCharacters,
+    getCharactersWithMetadata: getCharactersWithMetadata,
+    getCharData: getCharData,
+    getCharName: getCharName,
 
-    loadBaseBlueprints: exports.loadBaseBlueprints,
-    loadFile: exports.loadFile,
+    loadBaseBlueprints: loadBaseBlueprints,
+    loadFile: loadFile,
 
-    //calculateVolition: exports.ruleLibrary.calculateVolition,
-    //runTriggerRules: exports.ruleLibrary.runTriggerRules,
-    //ruleToEnglish: exports.ruleLibrary.ruleToEnglish,
-    //predicateToEnglish: exports.ruleLibrary.predicateToEnglish,
+    calculateVolition: ruleLibrary.calculateVolition,
+    runTriggerRules: ruleLibrary.runTriggerRules,
+    ruleToEnglish: ruleLibrary.ruleToEnglish,
+    predicateToEnglish: ruleLibrary.predicateToEnglish,
 
-    //dumpSocialRecord: exports.socialRecord.dumpSocialRecord,
-    //dumpActionLibrary: exports.actionLibrary.dumpActions,
-    //set: exports.socialRecord.set,
-    get: exports.getSocialRecord,
-    getValue: exports.getValue,
-    setPredicates: exports.setPredicates,
-    setCharacterOffstage: exports.setCharacterOffstage,
-    getIsCharacterOffstage: exports.getIsCharacterOffstage,
-    setCharacterOnstage: exports.setCharacterOnstage,
-    getIsCharacterOnstage: exports.getIsCharacterOnstage,
-    setCharacterEliminated: exports.setCharacterEliminated,
-    getIsCharacterEliminated: exports.getIsCharacterEliminated,
-    //setupNextTimeStep: exports.socialRecord.setupNextTimeStep,
-    //getRegisteredDirection: exports.socialRecord.getRegisteredDirection,
-    //getAction: exports.actionLibrary.getAction,
-    //getActions: exports.actionLibrary.getActions,
-    //getAllActions: exports.actionLibrary.getAllActions,
-    //addActions: exports.actionLibrary.parseActions,
-    //addHistory: exports.socialRecord.addHistory,
-    //clearHistory: exports.socialRecord.clearHistory,
-    //getSocialRecordCopyAtTimestep: exports.socialRecord.getSocialRecordCopyAtTimestep,
-    //getSocialRecordCopy: exports.socialRecord.getSocialRecordCopy,
-    //getCurrentTimeStep: exports.socialRecord.getCurrentTimeStep,
+    dumpSocialRecord: socialRecord.dumpSocialRecord,
+    dumpActionLibrary: actionLibrary.dumpActions,
+    set: socialRecord.set,
+    get: getSocialRecord,
+    getValue: getValue,
+    setPredicates: setPredicates,
+    setCharacterOffstage: setCharacterOffstage,
+    getIsCharacterOffstage: getIsCharacterOffstage,
+    setCharacterOnstage: setCharacterOnstage,
+    getIsCharacterOnstage: getIsCharacterOnstage,
+    setCharacterEliminated: setCharacterEliminated,
+    getIsCharacterEliminated: getIsCharacterEliminated,
+    setupNextTimeStep: socialRecord.setupNextTimeStep,
+    getRegisteredDirection: socialRecord.getRegisteredDirection,
+    getAction: actionLibrary.getAction,
+    getActions: actionLibrary.getActions,
+    getAllActions: actionLibrary.getAllActions,
+    addActions: actionLibrary.parseActions,
+    addHistory: socialRecord.addHistory,
+    clearHistory: socialRecord.clearHistory,
+    getSocialRecordCopyAtTimestep: socialRecord.getSocialRecordCopyAtTimestep,
+    getSocialRecordCopy: socialRecord.getSocialRecordCopy,
+    getCurrentTimeStep: socialRecord.getCurrentTimeStep,
 
-    addRules: exports.addRules,
-    getRules: exports.getRules,
-    filterRules: exports.filterRules,
-    filterActions: exports.filterActions,
-    setRuleById: exports.setRuleById,
-    //getRuleById: exports.ruleLibrary.getRuleById,
-    //deleteRuleById: exports.ruleLibrary.deleteRuleById,
+    addRules: addRules,
+    getRules: getRules,
+    filterRules: filterRules,
+    filterActions: filterActions,
+    setRuleById: setRuleById,
+    getRuleById: ruleLibrary.getRuleById,
+    deleteRuleById: ruleLibrary.deleteRuleById,
 
-    //setActionById: exports.actionLibrary.setActionById,
-    doAction: exports.doAction,
-    //setSocialRecordById: exports.socialRecord.setById,
-
-
-    reset: exports.reset
+    setActionById: actionLibrary.setActionById,
+    doAction: doAction,
+    setSocialRecordById: socialRecord.setById,
 
 
-
-
+    reset: reset
 };
 
 /* test-code */
@@ -1059,7 +1066,6 @@ exports.ensembleInterface = {
 //*********
 //Lines from interface removed due to them seeming to be obsolete?
 // AH, the
-
 //**********
 
 //EXPERIMENT: don't think we want these to be public.
@@ -1073,3 +1079,4 @@ exports.ensembleInterface = {
 //document.dispatchEvent(event);
 
 //return ensembleInterface;
+module.exports = ensembleInterface;
