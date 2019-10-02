@@ -6,8 +6,10 @@
  * @private
  */
 
+const _ = require('../../jslib/underscore');
 const util = require('../../jslib/util');
 const validate = require('./Validate');
+const ruleLibrary = require('./RuleLibrary');
 
 /*--*/ var actions = []; //An array containing all of the actions available in this social world.
 

@@ -10,7 +10,7 @@
  */
 
 const fs = require('fs');
-const underscore = require('../../jslib/underscore');
+const _ = require('../../jslib/underscore');
 const util = require('../../jslib/util');
 const ruleLibrary = require('./RuleLibrary');
 const actionLibrary = require('./ActionLibrary');
@@ -389,11 +389,7 @@ var cast = ensemble.addCharacters(rawCast);
  * @return {Array}      An array of strings with all character keys (same as will be used in socialRecord entries, etc..
  */
 /*--*/ var getCharacters = function () {
-    //return _.keys(savedChars);
-    if (savedChars)
-        return Object.keys(savedChars);
-    else
-        return [];
+    return _.keys(savedChars);
 };
 
 /**

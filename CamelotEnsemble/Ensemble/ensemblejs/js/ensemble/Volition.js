@@ -29,6 +29,8 @@
  * @private
  */
 
+const _ = require('../../jslib/underscore');
+
 /*--*/ var volitionCache = {};
 /*--*/ var cachePositions = {};
 

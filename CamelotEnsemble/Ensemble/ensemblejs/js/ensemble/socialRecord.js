@@ -4,6 +4,7 @@
 * @private
 */
 
+const _ = require('../../jslib/underscore');
 const util = require('../../jslib/util');
 
 /*--*/ var socialRecord = [];
@@ -469,8 +470,7 @@ var history = ensemble.addHistory(rawHistory);
 // Return a hash string guaranteed to be unique for each distinct predicate regardless of key order.
 /*--*/ var predicateHash = function (obj) {
     var hash = [];
-    //var sortedKeys = _.keys(obj).sort();
-    var sortedKeys = Object.keys(obj).sort();
+    var sortedKeys = _.keys(obj).sort();
     for (var i = 0; i < sortedKeys.length; i++) {
         hash[i] = obj[sortedKeys[i]];
     };

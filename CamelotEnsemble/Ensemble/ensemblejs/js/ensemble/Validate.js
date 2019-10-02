@@ -3,6 +3,8 @@
  *
  */
 
+const _ = require('../../jslib/underscore');
+
 /*--*/ var allowedDirTypes = ["directed", "undirected", "reciprocal"];
 /*--*/ var allowedOpsConditions = [">", "<", "="];
 /*--*/ var allowedOpsEffects = ["+", "-", "="];
@@ -379,8 +381,7 @@
 
     // Look for extra keys.
     delete pred.comment;
-    //var remainingKeys = _.keys(pred);
-    var remainingKeys = Object.keys(pred);
+    var remainingKeys = _.keys(pred);
     for (var i = 0; i < remainingKeys.length; i++) {
         if (pred[remainingKeys[i]] !== undefined) {
             return "found unexpected key for " + type + " predicate: '" + remainingKeys[i] + "'";

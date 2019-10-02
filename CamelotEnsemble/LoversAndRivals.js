@@ -129,40 +129,40 @@ var populateActionList = function (initiator, responder, storedVolitions, cast) 
 
     //Num intents to look at: 5
     //Num actions per intent: 2 (for now!)
-    //console.log("storedVolitions before getting possible actions... " , storedVolitions.dump());
+    console.log("storedVolitions before getting possible actions... " , storedVolitions.dump());
     var possibleActions = ensemble.getActions(char1, char2, storedVolitions, cast, gameVariables.numIntents, gameVariables.numActionsPerIntent);
-    //console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
+    console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
 
-    var divName = "actionList_" + char1 + "_" + char2;
-    var actionList = document.getElementById(divName);
+    //var divName = "actionList_" + char1 + "_" + char2;
+    //var actionList = document.getElementById(divName);
 
     //Let's make a button for each action the hero wants to take!
-    for (var i = 0; i < possibleActions.length; i += 1) {
-        //Make a new button
-        var action = possibleActions[i];
+    //for (var i = 0; i < possibleActions.length; i += 1) {
+    //    //Make a new button
+    //    var action = possibleActions[i];
 
-        //If the character doesn't have a strong volition to do this action,
-        //don't include it in the action list.
-        if (action.weight < 0) {
-            continue;
-        }
-        var buttonnode = document.createElement('input');
-        buttonnode.setAttribute('type', 'button');
-        buttonnode.setAttribute('name', action);
-        buttonnode.setAttribute('value', action.displayName);
-        buttonnode.actionToPerform = action;
-        buttonnode.cast = cast;
-        buttonnode.onclick = actionButtonClicked;
-        //buttonnode.attachEvent('onclick', actionButtonClicked2);
+    //    //If the character doesn't have a strong volition to do this action,
+    //    //don't include it in the action list.
+    //    if (action.weight < 0) {
+    //        continue;
+    //    }
+    //    var buttonnode = document.createElement('input');
+    //    buttonnode.setAttribute('type', 'button');
+    //    buttonnode.setAttribute('name', action);
+    //    buttonnode.setAttribute('value', action.displayName);
+    //    buttonnode.actionToPerform = action;
+    //    buttonnode.cast = cast;
+    //    buttonnode.onclick = actionButtonClicked;
+    //    //buttonnode.attachEvent('onclick', actionButtonClicked2);
 
 
-        actionList.appendChild(buttonnode);
-    }
+    //    actionList.appendChild(buttonnode);
+    //}
 
     //Write a little message if there were no possible actions.
-    if (actionList.innerHTML === "") {
-        actionList.innerHTML = "<i>No Actions Available</i>";
-    }
+    //if (actionList.innerHTML === "") {
+    //    actionList.innerHTML = "<i>No Actions Available</i>";
+    //}
 
 };
 

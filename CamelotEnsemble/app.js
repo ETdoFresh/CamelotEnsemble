@@ -27,10 +27,9 @@ var history = ensemble.addHistory(rawHistory);
 
 //ensemble.dumpSocialRecord();
 
-//Set up our initial state
+//Set up Ensemble initial state
 const loversAndRivals = require('./LoversAndRivals');
 loversAndRivals.setUpLoversAndRivalsInitialState();
-//loversAndRivals.setupCharacterPositions(500);
 
 // Camelot Initial State:
 console.log('start CreatePlace(YeOldeTavern, Tavern)');
@@ -49,6 +48,10 @@ console.log('start ChangeClothing(Rival, Noble)');
 console.log('start SetHairStyle(Rival, Short)');
 
 console.log('start Game');
+
+// Get next possible actions
+var storedVolitions = ensemble.calculateVolition(cast);
+loversAndRivals.populateActionLists(storedVolitions, cast);
 
 // Camelot States and such....
 const readline = require('readline');

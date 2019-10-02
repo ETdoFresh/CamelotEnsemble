@@ -9,7 +9,10 @@
  * @private
  */
 
+const _ = require('../../jslib/underscore');
 const util = require('../../jslib/util');
+const volition = require('./Volition');
+const socialRecord = require('./socialRecord');
 
 /*--*/ var ruleLibrary = {
     triggerRules: [],
@@ -811,8 +814,7 @@ const util = require('../../jslib/util');
 
     //first simple test! do these two guys have the same number of attributes?
     //If not, then heck, we know they are definitely not equal.
-    //if (_.size(pred1) !== _.size(pred2)) {
-    if (pred1.length !== pred2.length) {
+    if (_.size(pred1) !== _.size(pred2)) {
         return false;
     }
 
