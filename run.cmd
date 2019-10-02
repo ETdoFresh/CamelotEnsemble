@@ -32,7 +32,7 @@ IF NOT EXIST Camelot (
   rmdir /s /q CamelotTemp
   del Camelot\StartExperienceManager.bat
   echo cd ..\CamelotEnsemble > Camelot\StartExperienceManager.bat
-  echo ..\NodeJs\node.exe app.js > Camelot\StartExperienceManager.bat
+  echo ..\NodeJs\node.exe app.js >> Camelot\StartExperienceManager.bat
 )
 echo.
 
