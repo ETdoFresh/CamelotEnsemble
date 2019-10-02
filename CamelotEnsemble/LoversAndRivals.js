@@ -129,9 +129,9 @@ var populateActionList = function (initiator, responder, storedVolitions, cast) 
 
     //Num intents to look at: 5
     //Num actions per intent: 2 (for now!)
-    console.log("storedVolitions before getting possible actions... " , storedVolitions.dump());
+    //console.log("storedVolitions before getting possible actions... " , storedVolitions.dump());
     var possibleActions = ensemble.getActions(char1, char2, storedVolitions, cast, gameVariables.numIntents, gameVariables.numActionsPerIntent);
-    console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
+    //console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
 
     //var divName = "actionList_" + char1 + "_" + char2;
     //var actionList = document.getElementById(divName);
