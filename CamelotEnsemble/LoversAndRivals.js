@@ -117,13 +117,19 @@ var setupCharacterPositions = function (widthOfField) {
 //by calling individual instances of populateActionList
 var populateActionLists = function (storedVolitions, cast) {
     //populate the action list of hero to love:
-    populateActionList("hero", "love", storedVolitions, cast);
-    populateActionList("hero", "rival", storedVolitions, cast);
-    populateActionList("hero", "hero", storedVolitions, cast);
+    var actionMap = {};
+    populateActionList("hero", "love", storedVolitions, cast, actionMap);
+    populateActionList("hero", "rival", storedVolitions, cast, actionMap);
+    populateActionList("hero", "hero", storedVolitions, cast, actionMap);
+    return actionMap;
 };
 
+var initCap = function (word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 //Fills the actionList div with buttons corresponding to the actions the player can take.
-var populateActionList = function (initiator, responder, storedVolitions, cast) {
+var populateActionList = function (initiator, responder, storedVolitions, cast, actionMap) {
     var char1 = initiator;
     var char2 = responder;
 
@@ -131,7 +137,13 @@ var populateActionList = function (initiator, responder, storedVolitions, cast) 
     //Num actions per intent: 2 (for now!)
     //console.log("storedVolitions before getting possible actions... " , storedVolitions.dump());
     var possibleActions = ensemble.getActions(char1, char2, storedVolitions, cast, gameVariables.numIntents, gameVariables.numActionsPerIntent);
-    //console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
+    console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
+
+    var mapName = "Towards " + initCap(char2);
+    actionMap[mapName] = [];
+    for (var i = 0; i < possibleActions.length; i += 1) {
+        actionMap[mapName].push(possibleActions[i]);
+    }
 
     //var divName = "actionList_" + char1 + "_" + char2;
     //var actionList = document.getElementById(divName);
