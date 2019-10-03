@@ -137,7 +137,7 @@ var populateActionList = function (initiator, responder, storedVolitions, cast, 
     //Num actions per intent: 2 (for now!)
     //console.log("storedVolitions before getting possible actions... " , storedVolitions.dump());
     var possibleActions = ensemble.getActions(char1, char2, storedVolitions, cast, gameVariables.numIntents, gameVariables.numActionsPerIntent);
-    console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
+    //console.log("Possible Actions From " + char1 + " to " + char2 + ": ", possibleActions);
 
     var mapName = "Towards " + initCap(char2);
     actionMap[mapName] = [];

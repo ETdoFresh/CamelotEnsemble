@@ -118,7 +118,7 @@ rl.on('line', (input) => {
                 var label = actionCategories[i].replace('Hero', 'Yourself');
                 var actionTags = '';
                 for (var j = 0; j < actions[actionCategories[i]].length; j++) {
-                    actionTags += ' [PERFORM_ACTION_' + actionCategories[i] + '_' + j + '|' + actions[actionCategories[i]][j].displayName +']';
+                    actionTags += ' [PERFORM_ACTION_' + actionCategories[i] + '_' + j + '|' + actions[actionCategories[i]][j].displayName + ']';
                 }
                 startAction('SetDialog(' + label + ':' + actionTags + ')');
             }
@@ -139,9 +139,9 @@ rl.on('line', (input) => {
         ensemble.runTriggerRules(cast);
 
         //Print out if the action was 'accepted' or rejected!
-        var acceptMessage = action.displayName + " successful!";
+        actionResult = action.displayName + " successful!";
         if (action.isAccept !== undefined && action.isAccept === false) {
-            acceptMessage = action.displayName + " failed!";
+            actionResult = action.displayName + " failed!";
         }
 
         //Re-draw the people (maybe even by having them MOVE to their new positions...)
@@ -154,36 +154,53 @@ rl.on('line', (input) => {
         //var event = document.createEvent('Event');
         //event.initEvent('nextTurn', true, true);
         //document.dispatchEvent(event);
+        loversAndRivals.gameVariables.turnNumber += 1;
+        loversAndRivals.checkForEndConditions();
 
-        startAction('HideDialog()');
-
-        startAction('SetLeft(You)');
-        startAction('SetRight(Lover)');
-        startAction('ShowDialog()');
-
-        if (actionResult !== "")
-            startAction('SetDialog(' + actionResult + ')');
-
-        startAction('SetDialog(Social State)');
-
-        if (!showedDragNotification) {
-            startAction('SetDialog(Note: Drag to scroll this dialog box)');
-            showedDragNotification = true;
+        if (loversAndRivals.gameVariables.gameOver === true) {
+            startAction('HideDialog()');
+            startAction('ShowNarration()');
+            startAction('SetNarration(' + loversAndRivals.gameVariables.endingText + ')');
         }
+        else {
+            ensemble.setupNextTimeStep();
+            //ensemble.dumpSocialRecord();
+            storedVolitions = ensemble.calculateVolition(cast);
+            //var testActions = ensemble.getActions("love", "hero", storedVolitions, cast, 2, 100);
+            //console.log("This is what love wants to do towards hero: ", testActions);
+            actions = loversAndRivals.populateActionLists(storedVolitions, cast);
+            //loversAndRivals.cleanUpUIForNewTurn();
 
-        startAction('SetDialog(Closeness)');
-        startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
-        startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
-        startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
-        startAction('SetDialog(Attraction)');
-        startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
-        startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
-        startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
-        startAction('SetDialog(Hero Attribute)s');
-        startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
-        startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
+            startAction('HideDialog()');
 
-        startAction('SetDialog([ACTION_SELECTION|Got it!])');
+            startAction('SetLeft(You)');
+            startAction('SetRight(Lover)');
+            startAction('ShowDialog()');
+
+            if (actionResult !== "")
+                startAction('SetDialog(' + actionResult + ')');
+
+            startAction('SetDialog(Social State)');
+
+            if (!showedDragNotification) {
+                startAction('SetDialog(Note: Drag to scroll this dialog box)');
+                showedDragNotification = true;
+            }
+
+            startAction('SetDialog(Closeness)');
+            startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
+            startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
+            startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
+            startAction('SetDialog(Attraction)');
+            startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
+            startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
+            startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
+            startAction('SetDialog(Hero Attribute)s');
+            startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
+            startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
+
+            startAction('SetDialog([ACTION_SELECTION|Got it!])');
+        }
     }
     else if (input === 'input Selected EXIT') {
         startAction('Quit()');
