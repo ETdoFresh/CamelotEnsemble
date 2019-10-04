@@ -14,8 +14,6 @@ var schema = ensemble.loadSocialStructure(rawSchema);
 var rawCast = ensemble.loadFile('./Ensemble/ensemblejs/sampleGame/data/cast.json');
 var cast = ensemble.addCharacters(rawCast);
 
-//console.log("Here is our cast! ", cast);
-
 var rawTriggerRules = ensemble.loadFile('./Ensemble/ensemblejs/sampleGame/data/triggerRules.json');
 var triggerRules = ensemble.addRules(rawTriggerRules);
 
@@ -28,53 +26,203 @@ var actions = ensemble.addActions(rawActions);
 var rawHistory = ensemble.loadFile('./Ensemble/ensemblejs/sampleGame/data/history.json');
 var history = ensemble.addHistory(rawHistory);
 
-//ensemble.dumpSocialRecord();
-
 //Set up Ensemble initial state
 const loversAndRivals = require('./LoversAndRivals');
 loversAndRivals.setUpLoversAndRivalsInitialState();
-
-// Camelot Initial State:
-startAction('CreatePlace(YeOldeTavern, Tavern)');
-startAction('CreateCharacter(You, M, 25)');
-startAction('ChangeClothing(You, Peasant)');
-startAction('SetPosition(You, YeOldeTavern.Bar.Behind)');
-
-startAction('CreateCharacter(Lover, F, 25)');
-startAction('SetPosition(Lover, YeOldeTavern.StoolFrontRight)');
-startAction('ChangeClothing(Lover, Noble)');
-startAction('SetHairStyle(Lover, Ponytail)');
-
-startAction('CreateCharacter(Rival, M, 25)');
-startAction('SetPosition(Rival, YeOldeTavern.Chair)');
-startAction('ChangeClothing(Rival, Noble)');
-startAction('SetHairStyle(Rival, Short)');
-
-startAction('Game');
-
-
-
-// Get next possible actions
-var storedVolitions = ensemble.calculateVolition(cast);
-var actions = loversAndRivals.populateActionLists(storedVolitions, cast);
-
-// Handle Camelot/Ensemble Actions
-const readline = require('readline');
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
 var actionResult = "";
 var showedDragNotification = false;
-rl.on('line', (input) => {
-    if (input === 'input Selected Start') {
-        startAction('SetCameraFocus(You)');
-        setTimeout(function () {
-            startAction('SetLeft(You)');
-            startAction('ShowDialog()');
-            startAction('SetDialog(Welcome to Lovers and Rivals!)');
-            startAction('SetDialog(Select actions to win the heart of your love![SOCIAL_STATE|Lets get started!])');
-        }, 1000);
+var showingStatsAllowed = false;
+
+// Camelot Initial State:
+var setupInitialState = function () {
+    startAction('CreatePlace(LoversLibrary, Library)');
+    startAction('CreateCharacter(You, M, 25)');
+    startAction('ChangeClothing(You, Peasant)');
+    startAction('SetPosition(You, LoversLibrary.Door)');
+
+    startAction('CreateCharacter(Lover, F, 25)');
+    startAction('SetPosition(Lover, LoversLibrary.Bookcase)');
+    startAction('ChangeClothing(Lover, Noble)');
+    startAction('SetHairStyle(Lover, Ponytail)');
+
+    startAction('CreateCharacter(Rival, M, 25)');
+    startAction('SetPosition(Rival, LoversLibrary.Bookcase3)');
+    startAction('ChangeClothing(Rival, Noble)');
+    startAction('SetHairStyle(Rival, Short)');
+
+    startAction('Game');
+}
+
+var reset = function () {
+    startAction('HideDialog()');
+    startAction('HideNarration()');
+    startAction('DisableIcon(StudyWriting, LoversLibrary.SpellBook)');
+    startAction('DisableIcon(StudyLove, LoversLibrary.SpellBook)');
+    startAction('DisableIcon(PracticeSpellsSuccess, LoversLibrary.Cauldron)');
+    startAction('DisableIcon(PracticeSpellsFail, LoversLibrary.Cauldron)');
+    startAction('DisableIcon(StudySpells, LoversLibrary.SpellBook)');
+    startAction('DisableIcon(KissSuccess, Lover)');
+    startAction('DisableIcon(KissFail, Lover)');
+    startAction('DisableIcon(WriteLoveNoteAccept, LoversLibrary.AlchemistTable)');
+    startAction('DisableIcon(WriteLoveNoteReject, LoversLibrary.AlchemistTable)');
+};
+
+var showIntroduction = function () {
+    reset();
+    startAction('SetCameraFocus(You)');
+    startAction('SetLeft(You)');
+    startAction('ShowDialog()');
+    startAction('SetDialog(Welcome to Lovers and Rivals!)');
+    startAction('SetDialog(Select actions to win the heart of your love![WALK_UP_STAIRS|Lets get started!])');
+};
+
+var walkUpStairs = function () {
+    reset();
+    startAction('WalkTo(You, LoversLibrary.Bookcase5)');
+    startAction('DisableInput()');
+}
+
+var enableIcons = function () {
+    var actionCategories = ['Towards Love', 'Towards Hero']
+    for (var i = 0; i < actionCategories.length; i++) {
+        var label = actionCategories[i].replace('Hero', 'Yourself');
+        var actionTags = '';
+        for (var j = 0; j < actions[actionCategories[i]].length; j++) {
+            var action = actions[actionCategories[i]][j];
+            switch (action.name) {
+                case 'studyMath':
+                    startAction('EnableIcon(StudyWriting, Pen, LoversLibrary.SpellBook, Study Writing, false)');
+                    break;
+                case 'studyAnatomy':
+                    startAction('EnableIcon(StudyLove, Pen, LoversLibrary.SpellBook, Study the Secrets of Love, false)');
+                    break;
+                case 'weightLiftSuccess':
+                    startAction('EnableIcon(PracticeSpellsSuccess, Pen, LoversLibrary.Cauldron, Practice Spells, false)');
+                    break;
+                case 'weightLiftFail':
+                    startAction('EnableIcon(PracticeSpellsFail, Pen, LoversLibrary.Cauldron, Practice Spells, false)');
+                    break;
+                case 'pushup1':
+                    startAction('EnableIcon(StudySpells, Pen, LoversLibrary.SpellBook, Study Spells, false)');
+                    break;
+                case 'kissSuccess':
+                    startAction('EnableIcon(KissSuccess, Pen, Lover, Kiss, false)');
+                    break;
+                case 'kissFail':
+                    startAction('EnableIcon(KissFail, Pen, Lover, Kiss, false)');
+                    break;
+                case 'writeLoveNoteAccept':
+                    startAction('EnableIcon(WriteLoveNoteAccept, Pen, LoversLibrary.AlchemistTable, Write Love Note, false)');
+                    break;
+                case 'writeLoveNoteReject':
+                    startAction('EnableIcon(WriteLoveNoteReject, Pen, LoversLibrary.AlchemistTable, Write Love Note, false)');
+                    break;
+            }
+        }
     }
-    else if (input === 'input Selected SOCIAL_STATE') {
+}
+
+var resumeGame = function () {
+    reset();
+    enableIcons();
+    startAction('EnableInput()');
+    showingStatsAllowed = true;
+}
+
+var showFailEffect = function () {
+    //startAction('CreateEffect(You, heartbroken, 3)'); // Not working right now
+    startAction('CreateEffect(You, blackflame, 3)');
+    resumeGame();
+}
+
+var showSucceedEffect = function () {
+    //startAction('CreateEffect(You, heart, 3)'); // Not working right now
+    startAction('CreateEffect(You, wildfire, 3)');
+    resumeGame();
+}
+
+var showStats = function () {
+    showingStatsAllowed = false;
+    startAction('SetLeft(You)');
+    startAction('ShowDialog()');
+    startAction('SetDialog(Social State)');
+    startAction('SetDialog(Note: Drag to scroll this dialog box)');
+    startAction('');
+    startAction('SetDialog(Closeness)');
+    startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
+    startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
+    startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
+    startAction('SetDialog(Attraction)');
+    startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
+    startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
+    startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
+    startAction('SetDialog(Hero Attribute)s');
+    startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
+    startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
+
+    startAction('SetDialog([DONE_WITH_STATS|Got it!])');
+};
+
+var doneWithStats = function () {
+    showingStatsAllowed = true;
+    startAction('HideDialog()');
+}
+
+var showActionSelection = function () {
+    startAction('HideDialog()');
+    setTimeout(function () {
+        startAction('SetLeft(Lover)');
+        startAction('SetRight(Rival)');
+        startAction('ShowDialog()');
+        startAction('SetDialog(Turn -- ' + loversAndRivals.gameVariables.turnNumber + ' --)');
+
+        var actionCategories = ['Towards Love', 'Towards Hero']
+        for (var i = 0; i < actionCategories.length; i++) {
+            var label = actionCategories[i].replace('Hero', 'Yourself');
+            var actionTags = '';
+            for (var j = 0; j < actions[actionCategories[i]].length; j++) {
+                actionTags += ' [PERFORM_ACTION_' + actionCategories[i] + '_' + j + '|' + actions[actionCategories[i]][j].displayName + ']';
+            }
+            startAction('SetDialog(' + label + ':' + actionTags + ')');
+        }
+    }, 1000);
+};
+
+var showPerformAction = function () {
+    var actionCategory = input.split('_')[2];
+    var actionIndex = input.split('_')[3];
+    var action = actions[actionCategory][actionIndex];
+
+    //CHANGE THE SOCIAL STATE -- social physics baby!!!
+    var effects = action.effects;
+    for (var i = 0; i < effects.length; i += 1) {
+        ensemble.set(effects[i]);
+    }
+
+    //RUN SOME TRIGGER RULES based on the new state!
+    ensemble.runTriggerRules(cast);
+
+    //Print out if the action was 'accepted' or rejected!
+    actionResult = action.displayName + " successful!";
+    if (action.isAccept !== undefined && action.isAccept === false) {
+        actionResult = action.displayName + " failed!";
+    }
+
+    //set up next turn.
+    loversAndRivals.updateLocalStateInformation();
+    loversAndRivals.gameVariables.turnNumber += 1;
+    loversAndRivals.checkForEndConditions();
+
+    if (loversAndRivals.gameVariables.gameOver === true) {
+        startAction('HideDialog()');
+        startAction('ShowNarration()');
+        startAction('SetNarration(' + loversAndRivals.gameVariables.endingText + ')');
+    }
+    else {
+        ensemble.setupNextTimeStep();
+        storedVolitions = ensemble.calculateVolition(cast);
+        actions = loversAndRivals.populateActionLists(storedVolitions, cast);
+
         startAction('HideDialog()');
 
         startAction('SetLeft(You)');
@@ -105,108 +253,38 @@ rl.on('line', (input) => {
 
         startAction('SetDialog([ACTION_SELECTION|Got it!])');
     }
-    else if (input === 'input Selected ACTION_SELECTION') {
-        startAction('HideDialog()');
-        setTimeout(function () {
-            startAction('SetLeft(Lover)');
-            startAction('SetRight(Rival)');
-            startAction('ShowDialog()');
-            startAction('SetDialog(Turn -- ' + loversAndRivals.gameVariables.turnNumber + ' --)');
+}
 
-            var actionCategories = ['Towards Love', 'Towards Hero']
-            for (var i = 0; i < actionCategories.length; i++) {
-                var label = actionCategories[i].replace('Hero', 'Yourself');
-                var actionTags = '';
-                for (var j = 0; j < actions[actionCategories[i]].length; j++) {
-                    actionTags += ' [PERFORM_ACTION_' + actionCategories[i] + '_' + j + '|' + actions[actionCategories[i]][j].displayName + ']';
-                }
-                startAction('SetDialog(' + label + ':' + actionTags + ')');
-            }
-        }, 1000);
-    }
-    else if (input.startsWith('input Selected PERFORM_ACTION_')) {
-        var actionCategory = input.split('_')[2];
-        var actionIndex = input.split('_')[3];
-        var action = actions[actionCategory][actionIndex];
+var exit = function () {
+    startAction('Quit()');
+    process.exit();
+}
 
-        //CHANGE THE SOCIAL STATE -- social physics baby!!!
-        var effects = action.effects;
-        for (var i = 0; i < effects.length; i += 1) {
-            ensemble.set(effects[i]);
-        }
+// Get next possible actions
+var storedVolitions = ensemble.calculateVolition(cast);
+var actions = loversAndRivals.populateActionLists(storedVolitions, cast);
 
-        //RUN SOME TRIGGER RULES based on the new state!
-        ensemble.runTriggerRules(cast);
+setupInitialState();
 
-        //Print out if the action was 'accepted' or rejected!
-        actionResult = action.displayName + " successful!";
-        if (action.isAccept !== undefined && action.isAccept === false) {
-            actionResult = action.displayName + " failed!";
-        }
+// Handle Camelot/Ensemble Actions
+const readline = require('readline');
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+rl.on('line', (input) => {
+    if (input === 'input Selected Start') showIntroduction();
+    else if (input === 'input Selected WALK_UP_STAIRS') walkUpStairs();
+    else if (input === 'succeeded WalkTo(You, LoversLibrary.Bookcase5)') resumeGame();
 
-        //Re-draw the people (maybe even by having them MOVE to their new positions...)
-        //Also re-draw any debug/state informaton we want.
-        loversAndRivals.updateLocalStateInformation();
-        //loversAndRivals.displayStateInformation();
-        //loversAndRivals.moveAllCharacters();
+    else if (input === 'input KissFail Lover') showFailEffect();
+    else if (input === 'input WriteLoveNoteReject LoversLibrary.AlchemistTable') showFailEffect();
+    else if (input === 'input PracticeSpellsFail LoversLibrary.Cauldron') showFailEffect();
 
-        //set up next turn.
-        //var event = document.createEvent('Event');
-        //event.initEvent('nextTurn', true, true);
-        //document.dispatchEvent(event);
-        loversAndRivals.gameVariables.turnNumber += 1;
-        loversAndRivals.checkForEndConditions();
+    else if (input === 'input Selected SOCIAL_STATE') showSocialState();
+    else if (input === 'input Selected ACTION_SELECTION') showActionSelection();
+    else if (input.startsWith('input Selected PERFORM_ACTION_')) showPerformAction();
 
-        if (loversAndRivals.gameVariables.gameOver === true) {
-            startAction('HideDialog()');
-            startAction('ShowNarration()');
-            startAction('SetNarration(' + loversAndRivals.gameVariables.endingText + ')');
-        }
-        else {
-            ensemble.setupNextTimeStep();
-            //ensemble.dumpSocialRecord();
-            storedVolitions = ensemble.calculateVolition(cast);
-            //var testActions = ensemble.getActions("love", "hero", storedVolitions, cast, 2, 100);
-            //console.log("This is what love wants to do towards hero: ", testActions);
-            actions = loversAndRivals.populateActionLists(storedVolitions, cast);
-            //loversAndRivals.cleanUpUIForNewTurn();
+    else if (input == 'input Key Interact' && showingStatsAllowed) showStats();
+    else if (input === 'input Selected DONE_WITH_STATS') doneWithStats();
 
-            startAction('HideDialog()');
-
-            startAction('SetLeft(You)');
-            startAction('SetRight(Lover)');
-            startAction('ShowDialog()');
-
-            if (actionResult !== "")
-                startAction('SetDialog(' + actionResult + ')');
-
-            startAction('SetDialog(Social State)');
-
-            if (!showedDragNotification) {
-                startAction('SetDialog(Note: Drag to scroll this dialog box)');
-                showedDragNotification = true;
-            }
-
-            startAction('SetDialog(Closeness)');
-            startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
-            startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
-            startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
-            startAction('SetDialog(Attraction)');
-            startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
-            startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
-            startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
-            startAction('SetDialog(Hero Attribute)s');
-            startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
-            startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
-
-            startAction('SetDialog([ACTION_SELECTION|Got it!])');
-        }
-    }
-    else if (input === 'input Selected EXIT') {
-        startAction('Quit()');
-        process.exit();
-    }
-    else if (input === 'exit') {
-        process.exit();
-    }
+    else if (input === 'input Selected EXIT') exit();
+    else if (input === 'exit') exit();
 });
