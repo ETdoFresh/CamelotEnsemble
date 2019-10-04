@@ -51,11 +51,24 @@ var setupInitialState = function () {
     startAction('SetHairStyle(Rival, Short)');
 
     startAction('Game');
+
+    startAction('EnableIcon(SHOW_SECRET, Pen, LoversLibrary.Door, Secret, true)')
+}
+
+var showSecret = function () {
+    startAction('ShowDialog()');
+    startAction('SetDialog(Psst....)');
+    startAction('SetDialog(Here is a secret!)');
+    startAction('SetDialog(Press the (E) key to see your social stats![HIDE_SECRET|Cool Thanks!])');
+}
+
+var hideDialogs = function () {
+    startAction('HideDialog()');
+    startAction('HideNarration()');
 }
 
 var reset = function () {
-    startAction('HideDialog()');
-    startAction('HideNarration()');
+    hideDialogs();
     startAction('DisableIcon(StudyWriting, LoversLibrary.SpellBook)');
     startAction('DisableIcon(StudyLove, LoversLibrary.SpellBook)');
     startAction('DisableIcon(PracticeSpellsSuccess, LoversLibrary.Cauldron)');
@@ -88,34 +101,38 @@ var enableIcons = function () {
         var label = actionCategories[i].replace('Hero', 'Yourself');
         var actionTags = '';
         for (var j = 0; j < actions[actionCategories[i]].length; j++) {
-            var action = actions[actionCategories[i]][j];
+            var actionCategory = actionCategories[i];
+            var actionIndex = j;
+            var action = actions[actionCategory][actionIndex];
+            var actionId = actionCategory + '_' + actionIndex + '_';
+
             switch (action.name) {
                 case 'studyMath':
-                    startAction('EnableIcon(StudyWriting, Pen, LoversLibrary.SpellBook, Study Writing, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.SpellBook, Study Writing, false)');
                     break;
                 case 'studyAnatomy':
-                    startAction('EnableIcon(StudyLove, Pen, LoversLibrary.SpellBook, Study the Secrets of Love, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.SpellBook, Study the Secrets of Love, false)');
                     break;
                 case 'weightLiftSuccess':
-                    startAction('EnableIcon(PracticeSpellsSuccess, Pen, LoversLibrary.Cauldron, Practice Spells, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.Cauldron, Practice Spells, false)');
                     break;
                 case 'weightLiftFail':
-                    startAction('EnableIcon(PracticeSpellsFail, Pen, LoversLibrary.Cauldron, Practice Spells, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.Cauldron, Practice Spells, false)');
                     break;
                 case 'pushup1':
-                    startAction('EnableIcon(StudySpells, Pen, LoversLibrary.SpellBook, Study Spells, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.SpellBook, Study Spells, false)');
                     break;
                 case 'kissSuccess':
-                    startAction('EnableIcon(KissSuccess, Pen, Lover, Kiss, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, Lover, Kiss, false)');
                     break;
                 case 'kissFail':
-                    startAction('EnableIcon(KissFail, Pen, Lover, Kiss, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, Lover, Kiss, false)');
                     break;
                 case 'writeLoveNoteAccept':
-                    startAction('EnableIcon(WriteLoveNoteAccept, Pen, LoversLibrary.AlchemistTable, Write Love Note, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.AlchemistTable, Write Love Note, false)');
                     break;
                 case 'writeLoveNoteReject':
-                    startAction('EnableIcon(WriteLoveNoteReject, Pen, LoversLibrary.AlchemistTable, Write Love Note, false)');
+                    startAction('EnableIcon(PERFORM_ACTION_' + actionId + ', Pen, LoversLibrary.AlchemistTable, Write Love Note, false)');
                     break;
             }
         }
@@ -188,7 +205,17 @@ var showActionSelection = function () {
     }, 1000);
 };
 
-var showPerformAction = function () {
+var showGameWin = function () {
+    // TODO: Add Win animation
+}
+
+var showGameLose = function () {
+    // TODO: Add Lose animation
+}
+
+var performAction = function (input) {
+    startAction('DisableInput()');
+
     var actionCategory = input.split('_')[2];
     var actionIndex = input.split('_')[3];
     var action = actions[actionCategory][actionIndex];
@@ -208,6 +235,9 @@ var showPerformAction = function () {
         actionResult = action.displayName + " failed!";
     }
 
+    if (actionResult.includes("successful!")) showSucceedEffect();
+    else showFailEffect();
+
     //set up next turn.
     loversAndRivals.updateLocalStateInformation();
     loversAndRivals.gameVariables.turnNumber += 1;
@@ -222,36 +252,12 @@ var showPerformAction = function () {
         ensemble.setupNextTimeStep();
         storedVolitions = ensemble.calculateVolition(cast);
         actions = loversAndRivals.populateActionLists(storedVolitions, cast);
+        resumeGame();
 
-        startAction('HideDialog()');
-
-        startAction('SetLeft(You)');
-        startAction('SetRight(Lover)');
-        startAction('ShowDialog()');
-
-        if (actionResult !== "")
-            startAction('SetDialog(' + actionResult + ')');
-
-        startAction('SetDialog(Social State)');
-
-        if (!showedDragNotification) {
-            startAction('SetDialog(Note: Drag to scroll this dialog box)');
-            showedDragNotification = true;
+        if (action !== '') {
+            startAction('ShowNarration()');
+            startAction('SetNarration(' + actionResult + ')');
         }
-
-        startAction('SetDialog(Closeness)');
-        startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
-        startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
-        startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
-        startAction('SetDialog(Attraction)');
-        startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
-        startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
-        startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
-        startAction('SetDialog(Hero Attribute)s');
-        startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
-        startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
-
-        startAction('SetDialog([ACTION_SELECTION|Got it!])');
     }
 }
 
@@ -274,16 +280,17 @@ rl.on('line', (input) => {
     else if (input === 'input Selected WALK_UP_STAIRS') walkUpStairs();
     else if (input === 'succeeded WalkTo(You, LoversLibrary.Bookcase5)') resumeGame();
 
-    else if (input === 'input KissFail Lover') showFailEffect();
-    else if (input === 'input WriteLoveNoteReject LoversLibrary.AlchemistTable') showFailEffect();
-    else if (input === 'input PracticeSpellsFail LoversLibrary.Cauldron') showFailEffect();
+    else if (input.startsWith('input PERFORM_ACTION_')) performAction(input);
 
     else if (input === 'input Selected SOCIAL_STATE') showSocialState();
     else if (input === 'input Selected ACTION_SELECTION') showActionSelection();
     else if (input.startsWith('input Selected PERFORM_ACTION_')) showPerformAction();
 
-    else if (input == 'input Key Interact' && showingStatsAllowed) showStats();
+    else if (input === 'input Key Cancel') hideDialogs();
+    else if (input === 'input Key Interact' && showingStatsAllowed) showStats();
     else if (input === 'input Selected DONE_WITH_STATS') doneWithStats();
+    else if (input === 'input SHOW_SECRET LoversLibrary.Door') showSecret();
+    else if (input === 'input Selected HIDE_SECRET') hideDialogs();
 
     else if (input === 'input Selected EXIT') exit();
     else if (input === 'exit') exit();
