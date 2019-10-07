@@ -863,7 +863,7 @@ const ruleLibrary = require('./RuleLibrary');
  */
 /*--*/ var getBestTerminalFromActionList = function (actionList) {
     //console.log("inside of getTerminalsFromActionList");
-    if (actionList.length <= 0) {
+    if (!actionList || actionList.length <= 0) {
         //we shouldn't be getting in here with an empty actionList!
         return undefined;
     }
@@ -911,7 +911,7 @@ const ruleLibrary = require('./RuleLibrary');
  * @return {[Object]}                    [Returns the best, bound action for this particular initiator, responder, and cast.]
  */
 /*--*/ var getAction = function (initiator, responder, volition, cast, numActionsPerGroup) {
-    console.log("inside getAction");
+    //console.log("inside getAction");
     //console.log("This is the contents of the actionLibrary: " , actionLibrary);
     if (numActionsPerGroup === undefined) {
         numActionsPerGroup = 1;

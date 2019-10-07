@@ -33,6 +33,72 @@ var actionResult = "";
 var assignedReadMind = false;
 var showingStatsAllowed = false;
 
+// Get next possible actions
+var storedVolitions = ensemble.calculateVolition(cast);
+var actions = loversAndRivals.populateActionLists(storedVolitions, cast);
+
+var actionTime = 5 * 1000; // milliseconds before AI performs actions.
+var actionTimer = undefined;
+
+var takeAction = function (initiator, action) {
+    //CHANGE THE SOCIAL STATE -- social physics baby!!!
+    var effects = action.effects;
+    for (var i = 0; i < effects.length; i += 1) {
+        ensemble.set(effects[i]);
+    }
+
+    //RUN SOME TRIGGER RULES based on the new state!
+    ensemble.runTriggerRules(cast);
+
+    //Print out if the action was 'accepted' or rejected!
+    actionResult = action.displayName + " successful!";
+    if (action.isAccept !== undefined && action.isAccept === false) {
+        actionResult = action.displayName + " failed!";
+    }
+
+    if (actionResult.includes("successful!")) showSucceedEffect(initiator);
+    else showFailEffect(initiator);
+
+    //set up next turn.
+    loversAndRivals.updateLocalStateInformation();
+    loversAndRivals.gameVariables.turnNumber += 1;
+    loversAndRivals.checkForEndConditions();
+}
+
+var startNpcActionTimer = function () {
+    clearTimeout(actionTimer);
+    actionTimer = setTimeout(function () {
+        for (var i = 0; i < cast.length; i++) {
+            if (loversAndRivals.gameVariables.gameOver) // If gameover, no more actions...
+                break;
+
+            if (cast[i] === "hero") // If player, ignore...
+                continue;
+
+            var initiator = cast[i];
+            var npcAction = undefined;
+            for (var j = 0; j < cast.length; j++) {
+                var responder = cast[j];
+                var currentAction = ensemble.getAction(initiator, responder, storedVolitions, cast);
+                if (currentAction !== undefined)
+                    if (npcAction === undefined || npcAction.weight < currentAction.weight)
+                        npcAction = currentAction;
+            }
+            if (npcAction !== undefined) {
+                takeAction(cast[i], npcAction);
+                console.log("NPC " + cast[i] + " took action: " + npcAction.displayName);
+            }
+        }
+
+        //console.dir(loversAndRivals.stateInformation);
+        startNpcActionTimer();
+    }, actionTime);
+}
+
+var stopNpcActionTimer = function () {
+    clearTimeout(actionTimer);
+}
+
 // Camelot Initial State:
 var setupInitialState = function () {
     startAction('CreatePlace(LoversLibrary, Library)');
@@ -136,6 +202,7 @@ var enableIcons = function () {
             }
         }
     }
+    startNpcActionTimer();
     if (!assignedReadMind) {
         startAction('EnableIcon(READ_MIND, Pen, Lover, Read Mind, false)');
     }
@@ -148,15 +215,21 @@ var resumeGame = function () {
     showingStatsAllowed = true;
 }
 
-var showFailEffect = function () {
+var showFailEffect = function (initiator) {
+    initiator = initiator === undefined ? 'You' : initiator;
+    initiator = initiator === 'love' ? 'Lover' : initiator;
+    initiator = initiator === 'rival' ? 'Rival' : initiator;
     //startAction('CreateEffect(You, heartbroken, 3)'); // Not working right now
-    startAction('CreateEffect(You, blackflame, 3)');
+    startAction('CreateEffect(' + initiator + ', blackflame, 3)');
     resumeGame();
 }
 
-var showSucceedEffect = function () {
+var showSucceedEffect = function (initiator) {
+    initiator = initiator === undefined ? 'You' : initiator;
+    initiator = initiator === 'love' ? 'Lover' : initiator;
+    initiator = initiator === 'rival' ? 'Rival' : initiator;
     //startAction('CreateEffect(You, heart, 3)'); // Not working right now
-    startAction('CreateEffect(You, wildfire, 3)');
+    startAction('CreateEffect(' + initiator + ', wildfire, 3)');
     resumeGame();
 }
 
@@ -174,17 +247,6 @@ var showStats = function () {
     showingStatsAllowed = false;
     startAction('SetLeft(You)');
     startAction('ShowDialog()');
-    //startAction('SetDialog(Social State)');
-    //startAction('SetDialog(Note: Drag to scroll this dialog box)');
-    //startAction('');
-    //startAction('SetDialog(Closeness)');
-    //startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
-    //startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
-    //startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
-    //startAction('SetDialog(Attraction)');
-    //startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
-    //startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
-    //startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
     startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
     startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
     startAction('SetDialog(What Hero thinks about Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
@@ -242,30 +304,14 @@ var showEndingText = function () {
 var performAction = function (input) {
     reset();
     startAction('DisableInput()');
+    stopNpcActionTimer();
 
     var actionCategory = input.split('_')[2];
     var actionIndex = input.split('_')[3];
     var action = actions[actionCategory][actionIndex];
 
-    //CHANGE THE SOCIAL STATE -- social physics baby!!!
-    var effects = action.effects;
-    for (var i = 0; i < effects.length; i += 1) {
-        ensemble.set(effects[i]);
-    }
-
-    //RUN SOME TRIGGER RULES based on the new state!
-    ensemble.runTriggerRules(cast);
-
-    //Print out if the action was 'accepted' or rejected!
-    if (action.isAccept !== undefined && action.isAccept === false)
-        showFailEffect();
-    else
-        showSucceedEffect();
-
-    //set up next turn.
-    loversAndRivals.updateLocalStateInformation();
-    loversAndRivals.gameVariables.turnNumber += 1;
-    loversAndRivals.checkForEndConditions();
+    if (action !== undefined)
+        takeAction("You", action);
 
     if (loversAndRivals.gameVariables.gameOver === true) {
         if (loversAndRivals.gameVariables.endingText.includes('Rival'))
@@ -278,8 +324,9 @@ var performAction = function (input) {
         storedVolitions = ensemble.calculateVolition(cast);
         actions = loversAndRivals.populateActionLists(storedVolitions, cast);
         resumeGame();
+        startNpcActionTimer();
 
-        if (action !== '') {
+        if (action !== undefined && action !== '') {
             startAction('ShowNarration()');
             startAction('SetNarration(' + action.displayName + ')');
         }
@@ -290,11 +337,6 @@ var exit = function () {
     startAction('Quit()');
     process.exit();
 }
-
-// Get next possible actions
-var storedVolitions = ensemble.calculateVolition(cast);
-var actions = loversAndRivals.populateActionLists(storedVolitions, cast);
-
 setupInitialState();
 
 // Handle Camelot/Ensemble Actions
