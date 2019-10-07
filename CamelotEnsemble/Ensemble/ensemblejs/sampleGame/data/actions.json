@@ -47,7 +47,7 @@
     {
       "name": "studyMath",
       "conditions": [],
-      "displayName": "Study",
+      "displayName": "You studied very hard! You got +10 intelligence!",
       "influenceRules": [
         {
           "name": "People in this world are inclined to study math.",
@@ -130,7 +130,7 @@
     {
       "name": "weightLiftSuccess",
       "conditions": [],
-      "displayName": "Practice Spells",
+      "displayName": "You succesfully practiced your spells! You earned +5 strength!",
       "influenceRules": [],
       "effects": [
         {
@@ -150,7 +150,7 @@
     },
     {
       "name": "weightLiftFail",
-      "displayName": "Practice Spells",
+      "displayName": "You failed in practicing your spells! You loss 10 strength!",
       "conditions": [],
       "influenceRules": [],
       "effects": [
@@ -178,7 +178,7 @@
     {
       "name": "pushup1",
       "conditions": [],
-      "displayName": "Study Spells",
+      "displayName": "You studied your spells! You earned 10 strength!",
       "influenceRules": [],
       "effects": [
         {
@@ -210,7 +210,7 @@
     },
     {
       "name": "kissSuccess",
-      "displayName": "Kiss",
+      "displayName": "You go in for the kiss. She kisses you back! You both feel closer to each other!",
       "conditions": [
         {
           "category": "feeling",
@@ -273,7 +273,7 @@
     },
     {
       "name": "kissFail",
-      "displayName": "Kiss",
+      "displayName": "You go in for the kiss. She disapproves and turns her head. She does not feel close to you.",
       "isAccept": false,
       "conditions": [
         {
@@ -307,7 +307,7 @@
     },
     {
       "name": "writeLoveNoteAccept",
-      "displayName": "Write Love Note",
+      "displayName": "You write a love note and hand it to your love. She accepts your note and smiles! You both feel closer to each other!",
       "conditions": [],
       "influenceRules": [],
       "isAccept": true,
@@ -332,7 +332,7 @@
     },
     {
       "name": "writeLoveNoteReject",
-      "displayName": "Write Love Note",
+      "displayName": "You write a love note and hand it to your love. She reads the note and frowns. She hands the note back and says she does not feel the same way.",
       "conditions": [],
       "influenceRules": [],
       "isAccept": false,

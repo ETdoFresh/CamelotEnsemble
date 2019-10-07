@@ -30,7 +30,7 @@ var history = ensemble.addHistory(rawHistory);
 const loversAndRivals = require('./LoversAndRivals');
 loversAndRivals.setUpLoversAndRivalsInitialState();
 var actionResult = "";
-var showedDragNotification = false;
+var assignedReadMind = false;
 var showingStatsAllowed = false;
 
 // Camelot Initial State:
@@ -63,6 +63,7 @@ var showSecret = function () {
 }
 
 var hideDialogs = function () {
+    showingStatsAllowed = true;
     startAction('HideDialog()');
     startAction('HideNarration()');
 }
@@ -98,8 +99,6 @@ var walkUpStairs = function () {
 var enableIcons = function () {
     var actionCategories = ['Towards Love', 'Towards Hero']
     for (var i = 0; i < actionCategories.length; i++) {
-        var label = actionCategories[i].replace('Hero', 'Yourself');
-        var actionTags = '';
         for (var j = 0; j < actions[actionCategories[i]].length; j++) {
             var actionCategory = actionCategories[i];
             var actionIndex = j;
@@ -137,6 +136,9 @@ var enableIcons = function () {
             }
         }
     }
+    if (!assignedReadMind) {
+        startAction('EnableIcon(READ_MIND, Pen, Lover, Read Mind, false)');
+    }
 }
 
 var resumeGame = function () {
@@ -158,32 +160,36 @@ var showSucceedEffect = function () {
     resumeGame();
 }
 
+var readMind = function () {
+    showingStatsAllowed = false;
+    startAction('SetLeft(Lover)');
+    startAction('ShowDialog()');
+    startAction('SetDialog(Closeness)');
+    startAction('SetDialog(What Lover thinks about Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
+    startAction('SetDialog(What Lover thinks about Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
+    startAction('SetDialog([Cancel|Got it!])');
+}
+
 var showStats = function () {
     showingStatsAllowed = false;
     startAction('SetLeft(You)');
     startAction('ShowDialog()');
-    startAction('SetDialog(Social State)');
-    startAction('SetDialog(Note: Drag to scroll this dialog box)');
-    startAction('');
-    startAction('SetDialog(Closeness)');
-    startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
-    startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
-    startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
-    startAction('SetDialog(Attraction)');
-    startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
-    startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
-    startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
-    startAction('SetDialog(Hero Attribute)s');
+    //startAction('SetDialog(Social State)');
+    //startAction('SetDialog(Note: Drag to scroll this dialog box)');
+    //startAction('');
+    //startAction('SetDialog(Closeness)');
+    //startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
+    //startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroCloseness + ')');
+    //startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalCloseness + ')');
+    //startAction('SetDialog(Attraction)');
+    //startAction('SetDialog( * Hero to Lover: ' + loversAndRivals.stateInformation.heroToLoveAttraction + ')');
+    //startAction('SetDialog( * Lover to Hero: ' + loversAndRivals.stateInformation.loveToHeroAttraction + ')');
+    //startAction('SetDialog( * Lover to Rival: ' + loversAndRivals.stateInformation.loveToRivalAttraction + ')');
     startAction('SetDialog( * Strength: ' + loversAndRivals.stateInformation.heroStrength + ')');
     startAction('SetDialog( * Intelligence: ' + loversAndRivals.stateInformation.heroIntelligence + ')');
-
-    startAction('SetDialog([DONE_WITH_STATS|Got it!])');
+    startAction('SetDialog(What Hero thinks about Lover: ' + loversAndRivals.stateInformation.heroToLoveCloseness + ')');
+    startAction('SetDialog([Cancel|Got it!])');
 };
-
-var doneWithStats = function () {
-    showingStatsAllowed = true;
-    startAction('HideDialog()');
-}
 
 var showActionSelection = function () {
     startAction('HideDialog()');
@@ -206,14 +212,35 @@ var showActionSelection = function () {
 };
 
 var showGameWin = function () {
-    // TODO: Add Win animation
+    startAction('WalkTo(You, Lover)')
+    startAction('DisableInput()');
+}
+
+var winYouAtLover = function () {
+    startAction('Kneel(You)');
 }
 
 var showGameLose = function () {
-    // TODO: Add Lose animation
+    startAction('WalkTo(Lover, Rival)')
+}
+
+var loseLoverAtRival = function () {
+    startAction('WalkTo(You, LoversLibrary.Chair)')
+    startAction('DisableInput()');
+}
+
+var loseYouAtChair = function () {
+    startAction('Kneel(Lover)');
+}
+
+var showEndingText = function () {
+    startAction('HideDialog()');
+    startAction('ShowNarration()');
+    startAction('SetNarration(' + loversAndRivals.gameVariables.endingText + ')');
 }
 
 var performAction = function (input) {
+    reset();
     startAction('DisableInput()');
 
     var actionCategory = input.split('_')[2];
@@ -230,13 +257,10 @@ var performAction = function (input) {
     ensemble.runTriggerRules(cast);
 
     //Print out if the action was 'accepted' or rejected!
-    actionResult = action.displayName + " successful!";
-    if (action.isAccept !== undefined && action.isAccept === false) {
-        actionResult = action.displayName + " failed!";
-    }
-
-    if (actionResult.includes("successful!")) showSucceedEffect();
-    else showFailEffect();
+    if (action.isAccept !== undefined && action.isAccept === false)
+        showFailEffect();
+    else
+        showSucceedEffect();
 
     //set up next turn.
     loversAndRivals.updateLocalStateInformation();
@@ -244,9 +268,10 @@ var performAction = function (input) {
     loversAndRivals.checkForEndConditions();
 
     if (loversAndRivals.gameVariables.gameOver === true) {
-        startAction('HideDialog()');
-        startAction('ShowNarration()');
-        startAction('SetNarration(' + loversAndRivals.gameVariables.endingText + ')');
+        if (loversAndRivals.gameVariables.endingText.includes('Rival'))
+            showGameLose();
+        else
+            showGameWin();
     }
     else {
         ensemble.setupNextTimeStep();
@@ -256,7 +281,7 @@ var performAction = function (input) {
 
         if (action !== '') {
             startAction('ShowNarration()');
-            startAction('SetNarration(' + actionResult + ')');
+            startAction('SetNarration(' + action.displayName + ')');
         }
     }
 }
@@ -286,11 +311,21 @@ rl.on('line', (input) => {
     else if (input === 'input Selected ACTION_SELECTION') showActionSelection();
     else if (input.startsWith('input Selected PERFORM_ACTION_')) showPerformAction();
 
+    else if (input === 'input Selected Cancel') hideDialogs();
     else if (input === 'input Key Cancel') hideDialogs();
     else if (input === 'input Key Interact' && showingStatsAllowed) showStats();
     else if (input === 'input Selected DONE_WITH_STATS') doneWithStats();
+    else if (input === 'input READ_MIND Lover') readMind();
     else if (input === 'input SHOW_SECRET LoversLibrary.Door') showSecret();
     else if (input === 'input Selected HIDE_SECRET') hideDialogs();
+
+    else if (loversAndRivals.gameVariables.gameOver) {
+        if (input === 'succeeded WalkTo(You, Lover)') winYouAtLover();
+        else if (input === 'succeeded WalkTo(Lover, Rival)') loseLoverAtRival();
+        else if (input === 'succeeded WalkTo(You, LoversLibrary.Chair)') loseYouAtChair();
+        else if (input === 'succeeded Kneel(Lover)') showEndingText();
+        else if (input === 'succeeded Kneel(You)') showEndingText();
+    }
 
     else if (input === 'input Selected EXIT') exit();
     else if (input === 'exit') exit();
