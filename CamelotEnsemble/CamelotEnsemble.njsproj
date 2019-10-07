@@ -29,6 +29,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="CamelotActionMap.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ensemble\ensemblejs\jslib\underscore.js" />
     <Compile Include="Ensemble\ensemblejs\jslib\util.js" />
     <Compile Include="Ensemble\ensemblejs\js\ensemble\ActionLibrary.js" />

@@ -30,15 +30,7 @@ var history = ensemble.addHistory(rawHistory);
 const loversAndRivals = require('./LoversAndRivals');
 loversAndRivals.setUpLoversAndRivalsInitialState();
 var actionResult = "";
-var assignedReadMind = false;
 var showingStatsAllowed = false;
-
-// Get next possible actions
-var storedVolitions = ensemble.calculateVolition(cast);
-var actions = loversAndRivals.populateActionLists(storedVolitions, cast);
-
-var actionTime = 5 * 1000; // milliseconds before AI performs actions.
-var actionTimer = undefined;
 
 var takeAction = function (initiator, action) {
     //CHANGE THE SOCIAL STATE -- social physics baby!!!
@@ -65,61 +57,7 @@ var takeAction = function (initiator, action) {
     loversAndRivals.checkForEndConditions();
 }
 
-var startNpcActionTimer = function () {
-    clearTimeout(actionTimer);
-    actionTimer = setTimeout(function () {
-        for (var i = 0; i < cast.length; i++) {
-            if (loversAndRivals.gameVariables.gameOver) // If gameover, no more actions...
-                break;
 
-            if (cast[i] === "hero") // If player, ignore...
-                continue;
-
-            var initiator = cast[i];
-            var npcAction = undefined;
-            for (var j = 0; j < cast.length; j++) {
-                var responder = cast[j];
-                var currentAction = ensemble.getAction(initiator, responder, storedVolitions, cast);
-                if (currentAction !== undefined)
-                    if (npcAction === undefined || npcAction.weight < currentAction.weight)
-                        npcAction = currentAction;
-            }
-            if (npcAction !== undefined) {
-                takeAction(cast[i], npcAction);
-                console.log("NPC " + cast[i] + " took action: " + npcAction.displayName);
-            }
-        }
-
-        //console.dir(loversAndRivals.stateInformation);
-        startNpcActionTimer();
-    }, actionTime);
-}
-
-var stopNpcActionTimer = function () {
-    clearTimeout(actionTimer);
-}
-
-// Camelot Initial State:
-var setupInitialState = function () {
-    startAction('CreatePlace(LoversLibrary, Library)');
-    startAction('CreateCharacter(You, M, 25)');
-    startAction('ChangeClothing(You, Peasant)');
-    startAction('SetPosition(You, LoversLibrary.Door)');
-
-    startAction('CreateCharacter(Lover, F, 25)');
-    startAction('SetPosition(Lover, LoversLibrary.Bookcase)');
-    startAction('ChangeClothing(Lover, Noble)');
-    startAction('SetHairStyle(Lover, Ponytail)');
-
-    startAction('CreateCharacter(Rival, M, 25)');
-    startAction('SetPosition(Rival, LoversLibrary.Bookcase3)');
-    startAction('ChangeClothing(Rival, Noble)');
-    startAction('SetHairStyle(Rival, Short)');
-
-    startAction('Game');
-
-    startAction('EnableIcon(SHOW_SECRET, Pen, LoversLibrary.Door, Secret, true)')
-}
 
 var showSecret = function () {
     startAction('ShowDialog()');
@@ -203,9 +141,6 @@ var enableIcons = function () {
         }
     }
     startNpcActionTimer();
-    if (!assignedReadMind) {
-        startAction('EnableIcon(READ_MIND, Pen, Lover, Read Mind, false)');
-    }
 }
 
 var resumeGame = function () {
@@ -213,24 +148,6 @@ var resumeGame = function () {
     enableIcons();
     startAction('EnableInput()');
     showingStatsAllowed = true;
-}
-
-var showFailEffect = function (initiator) {
-    initiator = initiator === undefined ? 'You' : initiator;
-    initiator = initiator === 'love' ? 'Lover' : initiator;
-    initiator = initiator === 'rival' ? 'Rival' : initiator;
-    //startAction('CreateEffect(You, heartbroken, 3)'); // Not working right now
-    startAction('CreateEffect(' + initiator + ', blackflame, 3)');
-    resumeGame();
-}
-
-var showSucceedEffect = function (initiator) {
-    initiator = initiator === undefined ? 'You' : initiator;
-    initiator = initiator === 'love' ? 'Lover' : initiator;
-    initiator = initiator === 'rival' ? 'Rival' : initiator;
-    //startAction('CreateEffect(You, heart, 3)'); // Not working right now
-    startAction('CreateEffect(' + initiator + ', wildfire, 3)');
-    resumeGame();
 }
 
 var readMind = function () {
@@ -337,17 +254,15 @@ var exit = function () {
     startAction('Quit()');
     process.exit();
 }
-setupInitialState();
+
+const CamelotActionMap = require('./CamelotActionMap');
+CamelotActionMap.createWorld();
 
 // Handle Camelot/Ensemble Actions
 const readline = require('readline');
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 rl.on('line', (input) => {
-    if (input === 'input Selected Start') showIntroduction();
-    else if (input === 'input Selected WALK_UP_STAIRS') walkUpStairs();
-    else if (input === 'succeeded WalkTo(You, LoversLibrary.Bookcase5)') resumeGame();
-
-    else if (input.startsWith('input PERFORM_ACTION_')) performAction(input);
+    if (input.startsWith('input PERFORM_ACTION_')) performAction(input);
 
     else if (input === 'input Selected SOCIAL_STATE') showSocialState();
     else if (input === 'input Selected ACTION_SELECTION') showActionSelection();
@@ -371,4 +286,6 @@ rl.on('line', (input) => {
 
     else if (input === 'input Selected EXIT') exit();
     else if (input === 'exit') exit();
+
+    CamelotActionMap.processWaitFor(input);
 });
