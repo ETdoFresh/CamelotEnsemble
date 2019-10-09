@@ -26,14 +26,17 @@ var waitFor = function (initiator, actionList) {
 
 var processInput = function (input) {
     for (var character in currentActions) {
-        if (currentActions[character] !== undefined)
-            if (currentActions[character][0][0] === input) {
+        if (currentActions[character] !== undefined) {
+            var alternateInput = input.replace('failed', 'succeeded');
+            if (currentActions[character][0][0] === input
+                || currentActions[character][0][0] === alternateInput) {
                 var callback = currentActions[character][0][1];
                 currentActions[character].shift();
                 if (currentActions[character].length == 0)
                     currentActions[character] = undefined;
                 callback();
             }
+        }
     }
 
     if (currentActions['hero'] !== undefined)
@@ -262,6 +265,7 @@ var showIntroduction = function () {
 
 var walkUpStairs = function () {
     reset();
+    start('FadeIn()');
     start('WalkTo(You, LoversLibrary.Bookcase5)');
     start('DisableInput()');
 }
@@ -358,6 +362,8 @@ var startNpcActionTimer = function () {
 
 var stopNpcActionTimer = function () {
     clearTimeout(actionTimer);
+    currentActions['lover'] = undefined;
+    currentActions['rival'] = undefined;
 }
 
 var showSecret = function () {
@@ -390,6 +396,8 @@ var showStats = function () {
 var showGameWin = function () {
     hideDialogs();
     currentActions['hero'] = undefined;
+    start('FadeIn()');
+    start('SetPosition(Lover, LoversLibrary.Bookcase)');
     start('WalkTo(You, Lover)')
     start('DisableInput()');
 }
@@ -397,6 +405,8 @@ var showGameWin = function () {
 var showGameLose = function () {
     hideDialogs();
     currentActions['hero'] = undefined;
+    start('FadeIn()');
+    start('SetPosition(Rival, LoversLibrary.Bookcase3)');
     start('WalkTo(Lover, Rival)')
 }
 
