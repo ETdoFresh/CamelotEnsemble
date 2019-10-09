@@ -56,13 +56,16 @@ var processInput = function (input) {
         showSecret();
         waitFor('hero', [['input Selected Cancel', hideDialogs],]);
     }
+    else if (input === 'input Cancel') {
+        hideDialogs();
+    }
 
     else if (loversAndRivals.gameVariables.gameOver) {
         if (input === 'succeeded WalkTo(You, Lover)') {
             start('Kneel(You)');
             waitFor('hero', [
                 ['succeeded Kneel(You)', showEndingText],
-                ['input Key Cancel', exit]
+                ['input Cancel', exit]
             ]);
         }
         else if (input === 'succeeded WalkTo(Lover, Rival)') {
@@ -71,7 +74,7 @@ var processInput = function (input) {
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.Chair)', function () { start('Kneel(Lover)'); }],
                 ['succeeded Kneel(Lover)', showEndingText],
-                ['input Key Cancel', exit]
+                ['input Cancel', exit]
             ]);
         }
     }
@@ -425,69 +428,69 @@ var playerTakeAction = function (action) {
             start('WalkTo(You, LoversLibrary.SpellBook)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.SpellBook)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'studyAnatomy') {
             start('WalkTo(You, LoversLibrary.SpellBook)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.SpellBook)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'weightLiftSuccess') {
             start('WalkTo(You, LoversLibrary.Cauldron)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.Cauldron)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'weightLiftFail') {
             start('WalkTo(You, LoversLibrary.Cauldron)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.Cauldron)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'pushup1') {
             start('WalkTo(You, LoversLibrary.SpellBook)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.SpellBook)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'kissSuccess') {
             start('WalkTo(You, Lover)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, Lover)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'kissFail') {
             start('WalkTo(You, Lover)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, Lover)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'writeLoveNoteAccept') {
             start('WalkTo(You, LoversLibrary.AlchemistTable)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.AlchemistTable)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else if (action.name === 'writeLoveNoteReject') {
             start('WalkTo(You, LoversLibrary.AlchemistTable)');
             waitFor('hero', [
                 ['succeeded WalkTo(You, LoversLibrary.AlchemistTable)', function () { start('ShowNarration()'); start('SetNarration(' + action.displayName + ')'); takeAction("You", action); }],
-                ['input Key Cancel', function () { hideDialogs(); }]
+                ['input Cancel', function () { hideDialogs(); }]
             ]);
         }
         else {
             start('ShowNarration()');
             start('SetNarration(' + action.displayName + ')');
-            waitFor('hero', [['input Key Cancel', hideDialogs]]);
+            waitFor('hero', [['input Cancel', hideDialogs]]);
             takeAction("You", action);
         }
     }
